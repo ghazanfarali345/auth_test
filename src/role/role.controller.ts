@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { CreateRoleDto } from './dto/createRole.dto';
+import { UpdateRoleDto } from './dto/updateRole.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('role')
@@ -18,7 +18,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post('/')
-  @UseGuards(new AuthGuard())
+  // @UseGuards(new AuthGuard())
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);
   }

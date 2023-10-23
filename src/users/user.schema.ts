@@ -17,11 +17,14 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Role', required: true })
-  role: Types.ObjectId;
+  // @Prop({ type: Types.ObjectId, ref: 'Role', required: true })
+  // role: Types.ObjectId;
 
   @Prop({ default: false })
   isDeleted: boolean;
+
+  @Prop({ default: false })
+  isVerified: boolean;
 
   @Prop({ required: true })
   otp: string;
