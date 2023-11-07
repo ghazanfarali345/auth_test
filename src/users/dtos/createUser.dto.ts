@@ -1,15 +1,25 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty, IsEnum } from 'class-validator';
+import { Expose, Transform } from 'class-transformer';
+import { PlatformEnum } from './enums';
 
 export class CreateUserDTO {
   @IsString()
-  firstName: string;
+  @IsNotEmpty()
+  fullName: string;
 
   @IsString()
-  lastName: string;
+  @IsNotEmpty()
+  phoneNo: string;
 
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @IsString()
+  @IsNotEmpty()
   password: string;
+
+  @IsEnum(PlatformEnum)
+  @IsNotEmpty()
+  platform: PlatformEnum;
 }

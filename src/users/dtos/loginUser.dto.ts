@@ -1,4 +1,5 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { PlatformEnum } from './enums';
 
 export class LoginDTO {
   @IsEmail()
@@ -6,4 +7,8 @@ export class LoginDTO {
 
   @IsString()
   password: string;
+
+  @IsEnum(PlatformEnum)
+  @IsNotEmpty()
+  platform: PlatformEnum;
 }

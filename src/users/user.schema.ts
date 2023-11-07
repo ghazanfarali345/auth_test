@@ -1,21 +1,28 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { PlatformEnum } from './dtos/enums';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
   @Prop()
-  firstName: string;
+  fullName: string;
 
-  @Prop()
-  lastName: string;
+  @Prop({ required: true })
+  phoneNo: string;
+
+  @Prop({})
+  image: string;
 
   @Prop({ required: true, unique: true })
   email: string;
 
   @Prop({ required: true })
   password: string;
+
+  @Prop({})
+  pushNotificationEnabled: boolean;
 
   // @Prop({ type: Types.ObjectId, ref: 'Role', required: true })
   // role: Types.ObjectId;
@@ -29,7 +36,10 @@ export class User {
   @Prop({ required: true })
   otp: string;
 
-  @Prop()
+  @Prop({ required: true, enum: PlatformEnum })
+  platform: string;
+
+  @Prop({ enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' })
   status: string;
 }
 
