@@ -4,7 +4,7 @@ import { PlatformEnum } from './dtos/enums';
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop()
   fullName: string;
@@ -15,7 +15,7 @@ export class User {
   @Prop({})
   image: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ unique: true })
   email: string;
 
   @Prop({ required: true })
@@ -36,11 +36,17 @@ export class User {
   @Prop({ required: true })
   otp: string;
 
+  @Prop({})
+  isSocialAuth: boolean;
+
   @Prop({ required: true, enum: PlatformEnum })
   platform: string;
 
   @Prop({ enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' })
   status: string;
+
+  @Prop()
+  stripeCustomerId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

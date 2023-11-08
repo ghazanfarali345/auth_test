@@ -4,6 +4,7 @@ import { UsersController } from './users.controller';
 import { UserSchema } from './user.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { UserDevicesService } from 'src/user-devices/user-devices.service';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
+    UserDevicesService,
   ],
   providers: [UsersService],
   controllers: [UsersController],

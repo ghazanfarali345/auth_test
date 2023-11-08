@@ -1,5 +1,10 @@
-import { IsEmail, IsString, IsNotEmpty, IsEnum } from 'class-validator';
-import { Expose, Transform } from 'class-transformer';
+import {
+  IsEmail,
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  ValidateIf,
+} from 'class-validator';
 import { PlatformEnum } from './enums';
 
 export class CreateUserDTO {
@@ -21,5 +26,19 @@ export class CreateUserDTO {
 
   @IsEnum(PlatformEnum)
   @IsNotEmpty()
-  platform: PlatformEnum;
+  platform: PlatformEnum; // auth type
+
+  @IsString()
+  @IsNotEmpty()
+  pushNotification?: string;
+
+  @ValidateIf((object) => object.pushNotification === 'true')
+  @IsString()
+  @IsNotEmpty()
+  deviceType?: string;
+
+  @ValidateIf((object) => object.pushNotification === 'true')
+  @IsString()
+  @IsNotEmpty()
+  deviceToken?: string;
 }

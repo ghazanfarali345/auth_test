@@ -92,7 +92,7 @@ export class UsersService {
     };
   }
 
-  verifyUser = async (body: VerifyUserDTO) => {
+  async verifyUser(body: VerifyUserDTO) {
     const email = body.email!.toString();
     const otp = body.otp!.toString();
 
@@ -144,7 +144,7 @@ export class UsersService {
       message: 'User verified successfully',
       data: null,
     };
-  };
+  }
 
   async login(userData: LoginDTO): Promise<genericResponseType> {
     let user: any = await this.findByEmail(userData.email);

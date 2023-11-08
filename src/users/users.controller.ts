@@ -4,6 +4,7 @@ import { LoginDTO } from './dtos/loginUser.dto';
 import { CreateUserDTO } from './dtos/createUser.dto';
 import { VerifyUserDTO } from './dtos/verifyUser.dto';
 import { SendOtpDTO } from './dtos/sendOTP.dto';
+import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 
 @Controller('users')
 export class UsersController {
@@ -27,5 +28,15 @@ export class UsersController {
   @Post('/login')
   loginUser(@Body() body: LoginDTO): Promise<genericResponseType> {
     return this.usersService.login(body);
+  }
+
+  @Post('/forgetPassword')
+  forgetPassword(@Body() body: SendOtpDTO) {
+    return this.usersService.sendOtp(body);
+  }
+
+  @Post('/resetPassword')
+  resetPassword(@Body() body: ResetPasswordDTO) {
+    return this.usersService.resetPassword(body);
   }
 }
