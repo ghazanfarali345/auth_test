@@ -6,7 +6,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './role/role.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { UesrDevicesModule } from './uesr-devices/uesr-devices.module';
 import { UserDevicesModule } from './user-devices/user-devices.module';
 
 @Module({
