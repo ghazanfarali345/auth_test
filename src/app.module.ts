@@ -30,7 +30,6 @@ import { UserDevicesModule } from './user-devices/user-devices.module';
     MongooseModule.forRoot(process.env.MONGO_URL),
     UsersModule,
     RoleModule,
-    UesrDevicesModule,
     UserDevicesModule,
   ],
   controllers: [AppController],
