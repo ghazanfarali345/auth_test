@@ -27,7 +27,12 @@ export class UserDevicesService {
       userId,
     });
 
-    if (exists) return;
+    if (exists)
+      return {
+        success: true,
+        message: 'Device token already exists',
+        data: exists,
+      };
 
     const tokenAdded = await this.UserDeviceModel.create(userDevice);
 

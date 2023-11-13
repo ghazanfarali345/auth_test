@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, Types } from 'mongoose';
-// import { PlatformEnum } from './dtos/enums';
 import { User } from 'src/users/user.schema';
 
 export type UserDeviceDocument = HydratedDocument<UserDevice>;
@@ -8,7 +7,7 @@ export type UserDeviceDocument = HydratedDocument<UserDevice>;
 @Schema({ timestamps: true })
 export class UserDevice {
   @Prop({ ref: () => User })
-  userId: ObjectId;
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   deviceType: string;

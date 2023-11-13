@@ -35,7 +35,7 @@ export class UsersController {
     return this.usersService.sendOtp(body);
   }
 
-  @Post('/resetPassword')
+  @Put('/resetPassword')
   resetPassword(@Body() body: ResetPasswordDTO) {
     return this.usersService.resetPassword(body);
   }

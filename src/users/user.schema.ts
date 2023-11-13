@@ -15,7 +15,7 @@ export class User {
   @Prop({})
   image: string;
 
-  @Prop({ unique: true })
+  @Prop({ required: true, unique: true })
   email: string;
 
   @Prop({ required: true })
@@ -35,12 +35,6 @@ export class User {
 
   @Prop({ required: true })
   otp: string;
-
-  @Prop({})
-  isSocialAuth: boolean;
-
-  @Prop({ required: true, enum: PlatformEnum })
-  platform: string;
 
   @Prop({ enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' })
   status: string;

@@ -5,16 +5,17 @@ import * as bcrypt from 'bcrypt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
 
-import { User, UserDocument } from './user.schema';
+import { UserDocument } from './user.schema';
 import { CreateUserDTO } from './dtos/createUser.dto';
 import { LoginDTO } from './dtos/loginUser.dto';
 import { Utils } from '../utils/utils';
 import Omit from '../utils/omit';
 import { UpdateUserDTO } from './dtos/updateUser.dto';
 import { VerifyUserDTO } from './dtos/verifyUser.dto';
-import { sendOtpType } from './dtos/enums';
+import { ResetPasswordTypeEnum, SendOtpTypeEnum } from './dtos/enums';
 import { SendOtpDTO } from './dtos/sendOTP.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
+import { UserDevicesService } from '../user-devices/user-devices.service';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +23,7 @@ export class UsersService {
     @InjectModel('User') private readonly userModel: Model<UserDocument>,
     private jwtService: JwtService,
     private readonly mailerService: MailerService,
+    private readonly userDevicesService: UserDevicesService,
   ) {}
 
   async hashPassword(password: string): Promise<string> {
@@ -71,11 +73,11 @@ export class UsersService {
 
     this.mailerService
       .sendMail({
-        to: user.email, // List of receivers email address
-        from: 'budgetpie@example.com', // Senders email address
-        subject: 'Registration Otp', // Subject line
-        text: 'welcome', // plaintext body
-        html: `<b>Your registration otp is: ${user.otp}</b>`, // HTML body content
+        to: user.email,
+        from: 'budgetpie@example.com',
+        subject: 'Registration Otp',
+        text: 'welcome',
+        html: `<b>Your registration otp is: ${user.otp}</b>`,
       })
       .then((success) => {
         console.log(success);
@@ -84,6 +86,12 @@ export class UsersService {
         console.log(err);
       });
     user = Omit(user, ['password', 'otp', '__v']);
+
+    await this.userDevicesService.create({
+      userId: user._id,
+      deviceToken: userData.deviceToken,
+      deviceType: userData.deviceType,
+    });
 
     return {
       success: true,
@@ -172,8 +180,7 @@ export class UsersService {
 
     let payload = {
       email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
     };
 
     let token = this.jwtService.sign(payload, {
@@ -210,7 +217,7 @@ export class UsersService {
 
     let otp = Utils.OTPGenerator();
     let result;
-    if (body.type === sendOtpType.REGISTER_USER) {
+    if (body.type === SendOtpTypeEnum.REGISTER_USER) {
       result = await this.mailerService.sendMail({
         to: body.email, // List of receivers email address
         from: 'budgetpie@example.com', // Senders email address
@@ -220,7 +227,7 @@ export class UsersService {
       });
     }
 
-    if (body.type === sendOtpType.FORGOT_PASSWORD) {
+    if (body.type === SendOtpTypeEnum.FORGOT_PASSWORD) {
       result = await this.mailerService.sendMail({
         to: body.email, // List of receivers email address
         from: 'budgetpie@example.com', // Senders email address
@@ -240,32 +247,64 @@ export class UsersService {
   }
 
   async resetPassword(body: ResetPasswordDTO) {
-    console.log({ body });
-    let user: any = await this.findByEmail(body.email);
+    let updatedUser;
 
-    if (!user)
-      throw new HttpException(
-        { status: HttpStatus.BAD_REQUEST, error: 'Email not found' },
-        HttpStatus.BAD_REQUEST,
-      );
-
-    let password = await bcrypt.compare(body.password, user.password);
-
-    if (password)
+    if (body.password !== body.confirmPassword) {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
-          error: 'New password must be different from old password',
+          error: 'New password and confirm password must be same',
         },
         HttpStatus.FORBIDDEN,
       );
+    }
+    if (body.type === ResetPasswordTypeEnum.RESET_PASSWORD) {
+      let user: any = await this.findByEmail(body.email);
 
-    const hashedPassword = await this.hashPassword(body.password);
+      if (!user)
+        throw new HttpException(
+          { status: HttpStatus.BAD_REQUEST, error: 'Email not found' },
+          HttpStatus.BAD_REQUEST,
+        );
 
-    let updatedUser = await this.findOneAndUpdate(
-      { email: body.email },
-      { password: hashedPassword },
-    );
+      let password = await bcrypt.compare(body.password, user.password);
+
+      if (password)
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            error: 'New password must be different from old password',
+          },
+          HttpStatus.FORBIDDEN,
+        );
+
+      const hashedPassword = await this.hashPassword(body.password);
+
+      updatedUser = await this.findOneAndUpdate(
+        { email: body.email },
+        { password: hashedPassword },
+      );
+    }
+    if (body.type === ResetPasswordTypeEnum.CHANGE_PASSWORD) {
+      let user: any = await this.findByEmail(body.email);
+      let password = await bcrypt.compare(body.oldPassword, user.password);
+
+      if (!password)
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            error: 'Old is not correct',
+          },
+          HttpStatus.FORBIDDEN,
+        );
+
+      const hashedPassword = await this.hashPassword(body.password);
+
+      updatedUser = await this.findOneAndUpdate(
+        { email: body.email },
+        { password: hashedPassword },
+      );
+    }
 
     if (updatedUser) {
       return {

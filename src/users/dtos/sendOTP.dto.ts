@@ -1,5 +1,5 @@
 import { IsEmail, IsString, IsNotEmpty, IsEnum } from 'class-validator';
-import { sendOtpType } from './enums';
+import { SendOtpTypeEnum } from './enums';
 
 export class SendOtpDTO {
   @IsEmail()
@@ -8,6 +8,6 @@ export class SendOtpDTO {
 
   @IsString()
   @IsNotEmpty()
-  @IsEnum(sendOtpType)
-  type: sendOtpType;
+  @IsEnum(SendOtpTypeEnum)
+  type: SendOtpTypeEnum;
 }

@@ -5,25 +5,27 @@ import {
   IsEnum,
   ValidateIf,
   IsBoolean,
+  IsOptional,
 } from 'class-validator';
-import { PlatformEnum, DeviceTypeEnum } from './enums';
+import { PlatformEnum, DeviceTypeEnum } from '../../users/dtos/enums';
 
-export class CreateUserDTO {
+export class CreateSocialAuthDto {
   @IsString()
   @IsNotEmpty()
-  fullName: string;
+  clientId: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  phoneNo: string;
+  fullName?: string;
+
+  @IsString()
+  @IsOptional()
+  phoneNo?: string;
 
   @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password: string;
+  @IsOptional()
+  email?: string;
 
   @IsEnum(PlatformEnum)
   @IsNotEmpty()

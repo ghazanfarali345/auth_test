@@ -6,13 +6,21 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './role/role.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { UesrDevicesModule } from './uesr-devices/uesr-devices.module';
 import { UserDevicesModule } from './user-devices/user-devices.module';
+import { SocialAuthModule } from './social-auth/social-auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { CategoriesModule } from './categories/categories.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
+    }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1d' },
     }),
     MailerModule.forRoot({
       transport: {
@@ -25,14 +33,16 @@ import { UserDevicesModule } from './user-devices/user-devices.module';
         },
       },
       defaults: {
-        from: '"nest-modules" <user@outlook.com>', // outgoing email ID
+        from: '"nest-modules" <user@gmail.com>', // outgoing email ID
       },
     }),
     MongooseModule.forRoot(process.env.MONGO_URL),
     UsersModule,
     RoleModule,
-    UesrDevicesModule,
     UserDevicesModule,
+    SocialAuthModule,
+    CategoriesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
