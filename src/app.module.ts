@@ -36,7 +36,7 @@ import { NotificationsModule } from './notifications/notifications.module';
         from: '"nest-modules" <user@gmail.com>', // outgoing email ID
       },
     }),
-    MongooseModule.forRoot(process.env.MONGO_URL),
+    MongooseModule.forRoot(process.env.MONGO_URL_ATLAS),
     UsersModule,
     RoleModule,
     UserDevicesModule,
