@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { PlatformEnum } from './dtos/enums';
+import { Category } from 'src/categories/category.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -26,6 +26,9 @@ export class User {
 
   // @Prop({ type: Types.ObjectId, ref: 'Role', required: true })
   // role: Types.ObjectId;
+
+  @Prop({ ref: () => Category })
+  categories: [Types.ObjectId];
 
   @Prop({ default: false })
   isDeleted: boolean;

@@ -1,4 +1,5 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
+import { TypeEnum } from '../category.schema';
 
 export class CreateCategoryDto {
   @IsOptional()
@@ -9,4 +10,9 @@ export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(TypeEnum)
+  type: string;
 }

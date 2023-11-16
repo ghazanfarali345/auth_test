@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
@@ -16,6 +16,7 @@ import { ResetPasswordTypeEnum, SendOtpTypeEnum } from './dtos/enums';
 import { SendOtpDTO } from './dtos/sendOTP.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 import { UserDevicesService } from '../user-devices/user-devices.service';
+import { genericResponseType } from 'src/interfaces';
 
 @Injectable()
 export class UsersService {
@@ -179,6 +180,7 @@ export class UsersService {
     }
 
     let payload = {
+      _id: user._id,
       email: user.email,
       fullName: user.fullName,
     };
@@ -313,5 +315,40 @@ export class UsersService {
         data: null,
       };
     }
+  }
+
+  async addCategoryToUser(userId: string, body: any) {
+    console.log({ userId, body });
+    await this.userModel
+      .findOneAndUpdate(
+        { _id: new Types.ObjectId(userId) },
+        { $push: { categories: new Types.ObjectId(body.categoryId) } },
+        { new: true },
+      )
+      .exec();
+
+    return {
+      success: true,
+      message: 'Category added successfully',
+      data: null,
+    };
+  }
+
+  async removeCategoryToUser(userId: any, body: any) {
+    console.log({ userId, body });
+
+    await this.userModel
+      .findOneAndUpdate(
+        { _id: new Types.ObjectId(userId) },
+        { $pull: { categories: new Types.ObjectId(body.categoryId) } },
+        { new: true },
+      )
+      .exec();
+
+    return {
+      success: true,
+      message: 'Category removed successfully',
+      data: null,
+    };
   }
 }

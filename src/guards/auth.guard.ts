@@ -1,16 +1,13 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-// import { jwtConstants } from './constants';
 import { Request } from 'express';
-
-let jwtConstants = {
-  secret: 'SECRETOCTD120!',
-};
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,17 +17,29 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Access token is required',
+          success: false,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     try {
       const payload = await this.jwtService.verify(token, {
-        secret: jwtConstants.secret,
+        secret: process.env.JWT_SECRET,
       });
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
       request['user'] = payload;
     } catch {
-      throw new UnauthorizedException();
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Access token is required',
+          success: false,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     return true;
   }

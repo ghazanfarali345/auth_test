@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateRoleDto } from './dto/createRole.dto';
 import { UpdateRoleDto } from './dto/updateRole.dto';
 import { Role, RoleDocument } from './role.schema';
+import { genericResponseType } from 'src/interfaces';
 
 @Injectable()
 export class RoleService {

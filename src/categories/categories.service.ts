@@ -4,6 +4,8 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CategoryDocument } from './category.schema';
+import { pagination } from 'src/utils/pagination';
+import { Request } from 'express';
 
 @Injectable()
 export class CategoriesService {
@@ -32,19 +34,53 @@ export class CategoriesService {
     };
   }
 
-  async findAll() {
-    return `This action returns all categories`;
+  async findAll(req: Request) {
+    let result = await pagination(this.categoryModel, req, {});
+    return {
+      success: true,
+      message: 'Category fetched successfully',
+      data: result,
+    };
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(filter: { [key: string]: any }) {
+    let category = await this.categoryModel.findOne({
+      isDeleted: false,
+      ...filter,
+    });
+    return {
+      success: true,
+      message: 'Category fetched successfully',
+      data: category,
+    };
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(
+    filter: { [key: string]: any },
+    updateCategoryData: UpdateCategoryDto,
+  ) {
+    await this.categoryModel.findOneAndUpdate(
+      { isDeleted: false, ...filter },
+      updateCategoryData,
+      {
+        new: true,
+      },
+    );
+
+    return {
+      success: true,
+      message: 'Category updated successfully',
+      data: null,
+    };
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(filter: { [key: string]: any }) {
+    await this.categoryModel.findOneAndUpdate(filter, { isDeleted: true });
+
+    return {
+      success: true,
+      message: 'Category deleted successfully',
+      data: null,
+    };
   }
 }
