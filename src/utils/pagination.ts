@@ -25,7 +25,7 @@ export const pagination = async (
     };
 
     if (showAll) {
-      searchQuery.is_deleted = true;
+      searchQuery.isDeleted = true;
     }
 
     // Searching with keywords
@@ -39,6 +39,10 @@ export const pagination = async (
 
     if (req.query.toDate) {
       searchQuery.createdAt = { $lte: req.query.toDate };
+    }
+
+    if (req.query.type) {
+      searchQuery.type = req.query.type;
     }
 
     query = await query.find(searchQuery, { projection });

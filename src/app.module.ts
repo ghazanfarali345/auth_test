@@ -11,6 +11,7 @@ import { SocialAuthModule } from './social-auth/social-auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CategoriesModule } from './categories/categories.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -36,13 +37,18 @@ import { NotificationsModule } from './notifications/notifications.module';
         from: '"nest-modules" <user@gmail.com>', // outgoing email ID
       },
     }),
-    MongooseModule.forRoot(process.env.MONGO_URL_ATLAS),
+    MongooseModule.forRoot(
+      process.env.NODE_ENV === 'development'
+        ? process.env.MONGO_URL
+        : process.env.MONGO_URL_ATLAS,
+    ),
     UsersModule,
     RoleModule,
     UserDevicesModule,
     SocialAuthModule,
     CategoriesModule,
     NotificationsModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
