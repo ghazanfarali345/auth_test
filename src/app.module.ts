@@ -12,6 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CategoriesModule } from './categories/categories.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { HomeModule } from './home/home.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     CategoriesModule,
     NotificationsModule,
     TransactionsModule,
+    // HomeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

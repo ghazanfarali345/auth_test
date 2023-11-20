@@ -107,6 +107,8 @@ export class UsersService {
 
     const user = await this.findByEmail(email);
 
+    console.log({ user });
+
     if (!user)
       throw new HttpException(
         {
@@ -218,9 +220,9 @@ export class UsersService {
       );
 
     let otp = Utils.OTPGenerator();
-    let result;
+    let result: any;
     if (body.type === SendOtpTypeEnum.REGISTER_USER) {
-      result = await this.mailerService.sendMail({
+      this.mailerService.sendMail({
         to: body.email, // List of receivers email address
         from: 'budgetpie@example.com', // Senders email address
         subject: 'Registration Otp', // Subject line
@@ -229,8 +231,12 @@ export class UsersService {
       });
     }
 
+    if (user) {
+      await this.userModel.findOneAndUpdate({ email: user.email }, { otp });
+    }
+
     if (body.type === SendOtpTypeEnum.FORGOT_PASSWORD) {
-      result = await this.mailerService.sendMail({
+      this.mailerService.sendMail({
         to: body.email, // List of receivers email address
         from: 'budgetpie@example.com', // Senders email address
         subject: 'Forgot Password Otp', // Subject line
@@ -238,14 +244,13 @@ export class UsersService {
         html: `<b>Your password recovery otp is: ${otp}</b>`, // HTML body content
       });
     }
+    console.log({ result });
 
-    if (result.accepted.length) {
-      return {
-        success: true,
-        message: 'Otp sent successfully',
-        data: null,
-      };
-    }
+    return {
+      success: true,
+      message: 'Otp sent successfully',
+      data: null,
+    };
   }
 
   async resetPassword(body: ResetPasswordDTO) {
