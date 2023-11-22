@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 
@@ -7,22 +7,26 @@ import { CreateTransactionDto } from './dto/createTransaction.dto';
 import { UpdateTransactionDto } from './dto/updateTransaction.dto';
 import { Transaction } from './transaction.schema';
 import { paginationWithAggregation } from 'src/utils/paginationwithAggregation';
+import { IGetUserAuthInfoRequest } from 'src/interfaces';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     @InjectModel('Transaction')
-    private readonly TransactionModel = Model<Transaction>,
+    readonly TransactionModel = Model<Transaction>,
   ) {}
 
-  async create(body: CreateTransactionDto) {
-    let transaction = await this.TransactionModel.create(body);
+  async create(req: IGetUserAuthInfoRequest, body: CreateTransactionDto) {
+    let transaction = await this.TransactionModel.create({
+      userId: req.user._id,
+      ...body,
+    });
 
     if (!transaction)
       throw new HttpException(
         {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Something went wrong',
+          message: 'Internal Server Error',
           success: false,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,

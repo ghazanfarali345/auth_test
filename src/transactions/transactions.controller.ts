@@ -8,20 +8,27 @@ import {
   Delete,
   Req,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/createTransaction.dto';
 import { UpdateTransactionDto } from './dto/updateTransaction.dto';
 import { GetTransactionDto } from './dto/getAllTransaction.dto';
+import { IGetUserAuthInfoRequest } from 'src/interfaces';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post('/')
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  @UseGuards(AuthGuard)
+  create(
+    @Req() req: IGetUserAuthInfoRequest,
+    @Body() createTransactionDto: CreateTransactionDto,
+  ) {
+    return this.transactionsService.create(req, createTransactionDto);
   }
 
   @Get('/')

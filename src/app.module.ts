@@ -50,7 +50,7 @@ import { HomeModule } from './home/home.module';
     CategoriesModule,
     NotificationsModule,
     TransactionsModule,
-    // HomeModule,
+    HomeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

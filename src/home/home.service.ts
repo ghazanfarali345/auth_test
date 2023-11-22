@@ -1,96 +1,111 @@
 import { Injectable } from '@nestjs/common';
 import { CreateHomeDto } from './dto/create-home.dto';
 import { UpdateHomeDto } from './dto/update-home.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+
 import { TransactionsService } from 'src/transactions/transactions.service';
+import { Transaction } from 'src/transactions/transaction.schema';
+import { IGetUserAuthInfoRequest } from 'src/interfaces';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class HomeService {
-  constructor(
-    @InjectModel('Transaction')
-    private readonly transactionService = TransactionsService,
-  ) {}
+  constructor(private readonly transactionService: TransactionsService) {}
   create(createHomeDto: CreateHomeDto) {
     return 'This action adds a new home';
   }
 
-  // async findAll() {
-  //   const currentMonth = new Date().getMonth() + 1; // Assuming month starts from 1
-  //   const startOfMonth = new Date(
-  //     new Date().getFullYear(),
-  //     currentMonth - 1,
-  //     1,
-  //   );
-  //   const endOfMonth = new Date(
-  //     new Date().getFullYear(),
-  //     currentMonth,
-  //     0,
-  //     23,
-  //     59,
-  //     59,
-  //     999,
-  //   );
+  async findAll(req: IGetUserAuthInfoRequest) {
+    const currentMonth = new Date().getMonth() + 1;
+    let startOfMonth: any = new Date(
+      new Date().getFullYear(),
+      currentMonth - 1,
+      1,
+    );
+    let endOfMonth: any = new Date(
+      new Date().getFullYear(),
+      currentMonth,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
 
-  //   const incomeTransactions = await this.transactionService
-  //     .find({
-  //       type: 'INCOME',
-  //       createdAt: { $gte: startOfMonth, $lte: endOfMonth },
-  //     })
-  //     .exec();
+    if (req.query && req.query.startDate) {
+      startOfMonth = req.query.startOfMonth;
+    }
+    if (req.query && req.query.endDate) {
+      endOfMonth = req.query.endOfMonth;
+    }
 
-  //   const expenseTransactions = await this.TransactionModel.find({
-  //     type: 'EXPENSE',
-  //     createdAt: { $gte: startOfMonth, $lte: endOfMonth },
-  //   }).exec();
+    console.log({ startOfMonth, endOfMonth });
 
-  //   const income = incomeTransactions.reduce(
-  //     (sum, transaction) => sum + transaction.amount,
-  //     0,
-  //   );
-  //   const expense = expenseTransactions.reduce(
-  //     (sum, transaction) => sum + transaction.amount,
-  //     0,
-  //   );
-  //   const balance = income - expense;
+    const incomeTransactions =
+      await this.transactionService.TransactionModel.find({
+        userId: req.user._id,
+        type: 'INCOME',
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+      }).exec();
 
-  //   const incomeCategories =
-  //     this.calculateCategoryPercentage(incomeTransactions);
-  //   const expenseCategories =
-  //     this.calculateCategoryPercentage(expenseTransactions);
+    const expenseTransactions =
+      await this.transactionService.TransactionModel.find({
+        userId: req.user._id,
+        type: 'EXPENSE',
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+      }).exec();
 
-  //   return {
-  //     income,
-  //     expense,
-  //     balance,
-  //     incomeCategories,
-  //     expenseCategories,
-  //   };
-  // }
+    console.log({ incomeTransactions, expenseTransactions });
+    const income = incomeTransactions.reduce(
+      (sum, transaction) => sum + transaction.amount,
+      0,
+    );
+    const expense = expenseTransactions.reduce(
+      (sum, transaction) => sum + transaction.amount,
+      0,
+    );
+    const balance = income - expense;
 
-  // private calculateCategoryPercentage(
-  //   transactions: Transaction[],
-  // ): Record<string, number> {
-  //   const categoryPercentage: Record<string, number> = {};
+    const incomeCategories =
+      this.calculateCategoryPercentage(incomeTransactions);
+    const expenseCategories =
+      this.calculateCategoryPercentage(expenseTransactions);
 
-  //   transactions.forEach((transaction) => {
-  //     if (!categoryPercentage[transaction.category]) {
-  //       categoryPercentage[transaction.category] = 0;
-  //     }
+    return {
+      success: true,
+      message: 'Stats fetched successfully',
+      data: {
+        income,
+        expense,
+        balance,
+        incomeCategories,
+        expenseCategories,
+      },
+    };
+  }
 
-  //     categoryPercentage[transaction.category] +=
-  //       (transaction.amount / this.getTotalAmount(transactions)) * 100;
-  //   });
+  private calculateCategoryPercentage(
+    transactions: Transaction[],
+  ): Record<string, number> {
+    const categoryPercentage: Record<string, number> = {};
 
-  //   return categoryPercentage;
-  // }
+    transactions.forEach((transaction) => {
+      if (!categoryPercentage[transaction.category]) {
+        categoryPercentage[transaction.category] = 0;
+      }
 
-  // private getTotalAmount(transactions: Transaction[]): number {
-  //   return transactions.reduce(
-  //     (sum, transaction) => sum + transaction.amount,
-  //     0,
-  //   );
-  // }
+      categoryPercentage[transaction.category] +=
+        (transaction.amount / this.getTotalAmount(transactions)) * 100;
+    });
+
+    return categoryPercentage;
+  }
+
+  private getTotalAmount(transactions: Transaction[]): number {
+    return transactions.reduce(
+      (sum, transaction) => sum + transaction.amount,
+      0,
+    );
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} home`;

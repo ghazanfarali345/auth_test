@@ -6,10 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { HomeService } from './home.service';
 import { CreateHomeDto } from './dto/create-home.dto';
 import { UpdateHomeDto } from './dto/update-home.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { IGetUserAuthInfoRequest } from 'src/interfaces';
 
 @Controller('home')
 export class HomeController {
@@ -21,8 +25,9 @@ export class HomeController {
   }
 
   @Get()
-  findAll() {
-    // return this.homeService.findAll();
+  @UseGuards(AuthGuard)
+  findAll(@Req() req: IGetUserAuthInfoRequest) {
+    return this.homeService.findAll(req);
   }
 
   @Get(':id')

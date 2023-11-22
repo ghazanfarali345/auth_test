@@ -1,11 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, Types } from 'mongoose';
 import { TransactionEnum } from './dto/enums';
+import { User } from 'src/users/user.schema';
 
 export type TransactionDocument = HydratedDocument<Transaction>;
 
 @Schema({ timestamps: true })
 export class Transaction {
+  @Prop({ ref: () => User })
+  userId: Types.ObjectId;
+
   @Prop({ required: true })
   category: string;
 
