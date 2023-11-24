@@ -13,6 +13,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { HomeModule } from './home/home.module';
+import { StaticContentModule } from './static-content/static-content.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { HomeModule } from './home/home.module';
     NotificationsModule,
     TransactionsModule,
     HomeModule,
+    StaticContentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
