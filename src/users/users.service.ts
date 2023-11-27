@@ -213,7 +213,12 @@ export class UsersService {
   }
 
   async findOneAndUpdate(filter: UpdateUserDTO, data: UpdateUserDTO) {
-    return this.userModel.findOneAndUpdate(filter, data, { new: true }).exec();
+    await this.userModel.findOneAndUpdate(filter, data, { new: true }).exec();
+    return {
+      success: true,
+      message: 'User updated successfully',
+      data: null,
+    };
   }
 
   async sendOtp(body: SendOtpDTO) {
@@ -392,7 +397,7 @@ export class UsersService {
       },
     ]);
 
-    let result = categories.length ? categories[0] : categories;
+    let result = categories.length ? categories[0].categories : categories;
 
     return {
       success: true,

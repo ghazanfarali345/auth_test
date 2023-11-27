@@ -17,6 +17,7 @@ import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 import { Request } from 'express';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { genericResponseType, IGetUserAuthInfoRequest } from 'src/interfaces';
+import { UpdateUserDTO } from './dtos/updateUser.dto';
 
 @Controller('users')
 export class UsersController {
@@ -75,5 +76,15 @@ export class UsersController {
   @UseGuards(AuthGuard)
   getMyProfile(@Req() req: IGetUserAuthInfoRequest) {
     return this.usersService.findByEmail(req.user.email);
+  }
+
+  @Patch('/updateProfile')
+  @UseGuards(AuthGuard)
+  updateProfile(@Req() req: IGetUserAuthInfoRequest) {
+    let body: UpdateUserDTO = req.body;
+    return this.usersService.findOneAndUpdate(
+      { email: req.user.email },
+      req.body,
+    );
   }
 }
