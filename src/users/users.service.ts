@@ -159,7 +159,10 @@ export class UsersService {
   }
 
   async login(userData: LoginDTO): Promise<genericResponseType> {
-    let user: any = await this.findByEmail(userData.email);
+    let user: any = await this.userModel
+      .findOne({ email: userData.email })
+      .exec();
+
     if (!user)
       throw new HttpException(
         {
@@ -204,6 +207,17 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<any> {
     let user: any = (await this.userModel.findOne({ email }).exec()).toObject();
+
+    if (!user)
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'No user found',
+          success: false,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
     user = Omit(user, ['password', '--v', 'otp', 'categories']);
     return {
       success: true,

@@ -18,6 +18,7 @@ import { Request } from 'express';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { genericResponseType, IGetUserAuthInfoRequest } from 'src/interfaces';
 import { UpdateUserDTO } from './dtos/updateUser.dto';
+import { UpdateDTO } from './dtos/updateDTO';
 
 @Controller('users')
 export class UsersController {
@@ -81,10 +82,7 @@ export class UsersController {
   @Patch('/updateProfile')
   @UseGuards(AuthGuard)
   updateProfile(@Req() req: IGetUserAuthInfoRequest) {
-    let body: UpdateUserDTO = req.body;
-    return this.usersService.findOneAndUpdate(
-      { email: req.user.email },
-      req.body,
-    );
+    let body: UpdateDTO = req.body;
+    return this.usersService.findOneAndUpdate({ email: req.user.email }, body);
   }
 }
