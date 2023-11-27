@@ -16,7 +16,8 @@ import { ResetPasswordTypeEnum, SendOtpTypeEnum } from './dtos/enums';
 import { SendOtpDTO } from './dtos/sendOTP.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 import { UserDevicesService } from '../user-devices/user-devices.service';
-import { genericResponseType } from 'src/interfaces';
+import { IGetUserAuthInfoRequest, genericResponseType } from 'src/interfaces';
+import { Request } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -201,8 +202,14 @@ export class UsersService {
     };
   }
 
-  async findByEmail(email: string): Promise<UserDocument> {
-    return this.userModel.findOne({ email }).exec();
+  async findByEmail(email: string): Promise<any> {
+    let user: any = (await this.userModel.findOne({ email }).exec()).toObject();
+    user = Omit(user, ['password', '--v', 'otp', 'categories']);
+    return {
+      success: true,
+      message: 'User fetched successfully',
+      data: user,
+    };
   }
 
   async findOneAndUpdate(filter: UpdateUserDTO, data: UpdateUserDTO) {
@@ -354,6 +361,43 @@ export class UsersService {
       success: true,
       message: 'Category removed successfully',
       data: null,
+    };
+  }
+
+  async categoryList(req: IGetUserAuthInfoRequest) {
+    let typeFilter = {};
+    if (req.query.type) {
+      typeFilter = { 'categories.type': req.query.type };
+    }
+
+    let categories = await this.userModel.aggregate([
+      {
+        $match: { _id: new Types.ObjectId(req.user._id) },
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories',
+        },
+      },
+      {
+        $match: typeFilter,
+      },
+      {
+        $project: {
+          categories: 1,
+        },
+      },
+    ]);
+
+    let result = categories.length ? categories[0] : categories;
+
+    return {
+      success: true,
+      message: 'Categories fetched successfully',
+      data: result,
     };
   }
 }

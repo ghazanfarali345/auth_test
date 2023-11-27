@@ -6,6 +6,7 @@ import {
   Req,
   UseGuards,
   Patch,
+  Get,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LoginDTO } from './dtos/loginUser.dto';
@@ -62,5 +63,17 @@ export class UsersController {
   @UseGuards(AuthGuard)
   removeCategoryToUser(@Req() req: IGetUserAuthInfoRequest, @Body() body: any) {
     return this.usersService.removeCategoryToUser(req.user._id, body);
+  }
+
+  @Get('/myCategories')
+  @UseGuards(AuthGuard)
+  getMyCategories(@Req() req: IGetUserAuthInfoRequest) {
+    return this.usersService.categoryList(req);
+  }
+
+  @Get('/myProfile')
+  @UseGuards(AuthGuard)
+  getMyProfile(@Req() req: IGetUserAuthInfoRequest) {
+    return this.usersService.findByEmail(req.user.email);
   }
 }
