@@ -21,7 +21,6 @@ export class ResetPasswordDTO {
   @IsNotEmpty()
   oldPassword?: string;
 
-  @ValidateIf((object) => object.type === ResetPasswordTypeEnum.RESET_PASSWORD)
   @IsEmail()
   @IsNotEmpty()
   email?: string;

@@ -18,6 +18,7 @@ import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 import { UserDevicesService } from '../user-devices/user-devices.service';
 import { IGetUserAuthInfoRequest, genericResponseType } from 'src/interfaces';
 import { Request } from 'express';
+import { LogutDTO } from './dtos/logoutDTO';
 
 @Injectable()
 export class UsersService {
@@ -39,7 +40,7 @@ export class UsersService {
 
     console.log({ userData });
 
-    if (existingUser)
+    if (existingUser.data)
       throw new HttpException(
         {
           success: false,
@@ -59,7 +60,7 @@ export class UsersService {
     };
 
     console.log(newUserData);
-    let user: any = (await this.userModel.create(newUserData)).toObject();
+    let user: any = (await this.userModel.create(newUserData))?.toObject();
 
     if (!user) {
       throw new HttpException(
@@ -106,7 +107,7 @@ export class UsersService {
     const email = body.email!.toString();
     const otp = body.otp!.toString();
 
-    const user = await this.findByEmail(email);
+    const { data: user } = await this.findByEmail(email);
 
     console.log({ user });
 
@@ -206,7 +207,7 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<any> {
-    let user: any = (await this.userModel.findOne({ email }).exec()).toObject();
+    let user: any = await this.userModel.findOne({ email });
 
     if (!user)
       throw new HttpException(
@@ -218,7 +219,9 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
 
-    user = Omit(user, ['password', '--v', 'otp', 'categories']);
+    // user = Omit(user.toObject(), ['password', '--v', 'otp', 'categories']);
+    console.log({ user });
+
     return {
       success: true,
       message: 'User fetched successfully',
@@ -237,7 +240,7 @@ export class UsersService {
 
   async sendOtp(body: SendOtpDTO) {
     console.log({ body });
-    let user: any = await this.findByEmail(body.email);
+    let { data: user }: any = await this.findByEmail(body.email);
 
     if (!user)
       throw new HttpException(
@@ -292,7 +295,7 @@ export class UsersService {
       );
     }
     if (body.type === ResetPasswordTypeEnum.RESET_PASSWORD) {
-      let user: any = await this.findByEmail(body.email);
+      let { data: user }: any = await this.findByEmail(body.email);
 
       if (!user)
         throw new HttpException(
@@ -319,7 +322,8 @@ export class UsersService {
       );
     }
     if (body.type === ResetPasswordTypeEnum.CHANGE_PASSWORD) {
-      let user: any = await this.findByEmail(body.email);
+      let { data: user }: any = await this.findByEmail(body.email);
+      console.log({ user });
       let password = await bcrypt.compare(body.oldPassword, user.password);
 
       if (!password)
@@ -417,6 +421,22 @@ export class UsersService {
       success: true,
       message: 'Categories fetched successfully',
       data: result,
+    };
+  }
+
+  async logout(req: IGetUserAuthInfoRequest, data: LogutDTO) {
+    let tok = await this.userDevicesService.remove({
+      userId: new Types.ObjectId(req.user._id),
+      deviceToken: data.deviceToken,
+      deviceType: data.deviceType,
+    });
+
+    console.log({ tok });
+
+    return {
+      success: true,
+      message: 'User logged out successfully',
+      data: null,
     };
   }
 }

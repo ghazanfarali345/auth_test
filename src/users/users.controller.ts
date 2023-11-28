@@ -85,4 +85,11 @@ export class UsersController {
     let body: UpdateDTO = req.body;
     return this.usersService.findOneAndUpdate({ email: req.user.email }, body);
   }
+
+  @Post('/logout')
+  @UseGuards(AuthGuard)
+  logout(@Req() req: IGetUserAuthInfoRequest) {
+    let { deviceToken, deviceType } = req.body;
+    return this.usersService.logout(req, { deviceToken, deviceType });
+  }
 }

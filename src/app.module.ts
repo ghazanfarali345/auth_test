@@ -14,6 +14,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { HomeModule } from './home/home.module';
 import { StaticContentModule } from './static-content/static-content.module';
+import { FaqModule } from './faq/faq.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { StaticContentModule } from './static-content/static-content.module';
     TransactionsModule,
     HomeModule,
     StaticContentModule,
+    FaqModule,
   ],
   controllers: [AppController],
   providers: [AppService],

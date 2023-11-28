@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 export class UserDevicesService {
   constructor(
     @InjectModel('UserDevice')
-    private readonly UserDeviceModel: Model<UserDeviceDocument>,
+    readonly UserDeviceModel: Model<UserDeviceDocument>,
   ) {}
 
   async create(createUserDeviceDto: CreateUserDeviceDto) {
@@ -65,7 +65,7 @@ export class UserDevicesService {
     return `This action updates a #${id} userDevice`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userDevice`;
+  async remove(filter) {
+    return await this.UserDeviceModel.findOneAndDelete(filter);
   }
 }
