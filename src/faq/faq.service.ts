@@ -1,23 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFaqDto } from './dto/create-faq.dto';
 import { UpdateFaqDto } from './dto/update-faq.dto';
+import { Model, ObjectId } from 'mongoose';
+import { FaqDocument } from './faq.schema';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class FaqService {
-  create(createFaqDto: CreateFaqDto) {
-    return 'This action adds a new faq';
+  constructor(
+    @InjectModel('Faq') private readonly faqModel: Model<FaqDocument>,
+  ) {}
+
+  async create(createFaqDto: CreateFaqDto) {
+    let faq = await this.faqModel.create(createFaqDto);
+
+    return {
+      success: true,
+      message: 'Faq created successfully',
+      data: faq,
+    };
   }
 
-  findAll() {
-    return `This action returns all faq`;
+  async findAll() {
+    let faq = await this.faqModel.find();
+
+    return {
+      success: true,
+      message: 'Faq fetched successfully',
+      data: faq,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} faq`;
+  async findOne(id: ObjectId) {
+    let faq = await this.faqModel.findOne({ _id: id });
+
+    return {
+      success: true,
+      message: 'Faq fetched successfully',
+      data: faq,
+    };
   }
 
-  update(id: number, updateFaqDto: UpdateFaqDto) {
-    return `This action updates a #${id} faq`;
+  async update(filter: any, updateFaqDto: CreateFaqDto) {
+    let faq = await this.faqModel.findOneAndUpdate(filter, updateFaqDto, {
+      new: true,
+    });
+
+    return {
+      success: true,
+      message: 'Faq fetched successfully',
+      data: null,
+    };
   }
 
   remove(id: number) {

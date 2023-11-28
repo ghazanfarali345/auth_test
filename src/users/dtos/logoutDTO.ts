@@ -5,7 +5,7 @@ export class LogutDTO {
   @IsString()
   deviceToken: string;
 
-  @IsNotEmpty()
-  @IsString()
-  deviceType?: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // deviceType?: string;
 }

@@ -89,7 +89,7 @@ export class UsersController {
   @Post('/logout')
   @UseGuards(AuthGuard)
   logout(@Req() req: IGetUserAuthInfoRequest) {
-    let { deviceToken, deviceType } = req.body;
-    return this.usersService.logout(req, { deviceToken, deviceType });
+    let { deviceToken } = req.body;
+    return this.usersService.logout(req, { deviceToken });
   }
 }

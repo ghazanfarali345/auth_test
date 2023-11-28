@@ -428,7 +428,6 @@ export class UsersService {
     let tok = await this.userDevicesService.remove({
       userId: new Types.ObjectId(req.user._id),
       deviceToken: data.deviceToken,
-      deviceType: data.deviceType,
     });
 
     console.log({ tok });
