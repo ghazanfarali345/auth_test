@@ -230,11 +230,13 @@ export class UsersService {
   }
 
   async findOneAndUpdate(filter: UpdateUserDTO, data: UpdateUserDTO) {
-    await this.userModel.findOneAndUpdate(filter, data, { new: true }).exec();
+    let updatedUser = await this.userModel
+      .findOneAndUpdate(filter, data, { new: true })
+      .exec();
     return {
       success: true,
       message: 'User updated successfully',
-      data: null,
+      data: updatedUser,
     };
   }
 
