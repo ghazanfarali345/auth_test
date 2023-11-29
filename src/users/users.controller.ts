@@ -57,7 +57,6 @@ export class UsersController {
   @Patch('/addCategoryToUser')
   @UseGuards(AuthGuard)
   addCategoryToUser(@Req() req: IGetUserAuthInfoRequest, @Body() body: any) {
-    console.log({ user: req.user });
     return this.usersService.addCategoryToUser(req.user._id, body);
   }
 

@@ -38,8 +38,6 @@ export class UsersService {
   ): Promise<UserDocument | String | genericResponseType> {
     const existingUser = await this.findByEmail(userData.email);
 
-    console.log({ userData });
-
     if (existingUser.data)
       throw new HttpException(
         {
@@ -59,7 +57,6 @@ export class UsersService {
       otp: Utils.OTPGenerator(),
     };
 
-    console.log(newUserData);
     let user: any = (await this.userModel.create(newUserData))?.toObject();
 
     if (!user) {
@@ -108,8 +105,6 @@ export class UsersService {
     const otp = body.otp!.toString();
 
     const { data: user } = await this.findByEmail(email);
-
-    console.log({ user });
 
     if (!user)
       throw new HttpException(
@@ -209,18 +204,7 @@ export class UsersService {
   async findByEmail(email: string): Promise<any> {
     let user: any = await this.userModel.findOne({ email });
 
-    if (!user)
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'No user found',
-          success: false,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-
     // user = Omit(user.toObject(), ['password', '--v', 'otp', 'categories']);
-    console.log({ user });
 
     return {
       success: true,
@@ -241,7 +225,6 @@ export class UsersService {
   }
 
   async sendOtp(body: SendOtpDTO) {
-    console.log({ body });
     let { data: user }: any = await this.findByEmail(body.email);
 
     if (!user)
@@ -275,7 +258,6 @@ export class UsersService {
         html: `<b>Your password recovery otp is: ${otp}</b>`, // HTML body content
       });
     }
-    console.log({ result });
 
     return {
       success: true,
@@ -325,7 +307,6 @@ export class UsersService {
     }
     if (body.type === ResetPasswordTypeEnum.CHANGE_PASSWORD) {
       let { data: user }: any = await this.findByEmail(body.email);
-      console.log({ user });
       let password = await bcrypt.compare(body.oldPassword, user.password);
 
       if (!password)
@@ -355,7 +336,6 @@ export class UsersService {
   }
 
   async addCategoryToUser(userId: string, body: any) {
-    console.log({ userId, body });
     await this.userModel
       .findOneAndUpdate(
         { _id: new Types.ObjectId(userId) },
@@ -372,8 +352,6 @@ export class UsersService {
   }
 
   async removeCategoryToUser(userId: any, body: any) {
-    console.log({ userId, body });
-
     await this.userModel
       .findOneAndUpdate(
         { _id: new Types.ObjectId(userId) },
@@ -431,8 +409,6 @@ export class UsersService {
       userId: new Types.ObjectId(req.user._id),
       deviceToken: data.deviceToken,
     });
-
-    console.log({ tok });
 
     return {
       success: true,

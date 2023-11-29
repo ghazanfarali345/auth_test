@@ -38,8 +38,6 @@ export class HomeService {
       endOfMonth = req.query.endOfMonth;
     }
 
-    console.log({ startOfMonth, endOfMonth });
-
     const incomeTransactions =
       await this.transactionService.TransactionModel.find({
         userId: req.user._id,
@@ -54,7 +52,6 @@ export class HomeService {
         createdAt: { $gte: startOfMonth, $lte: endOfMonth },
       }).exec();
 
-    console.log({ incomeTransactions, expenseTransactions });
     const income = incomeTransactions.reduce(
       (sum, transaction) => sum + transaction.amount,
       0,

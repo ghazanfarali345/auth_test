@@ -39,7 +39,7 @@ export class TransactionsService {
     };
   }
 
-  async findAll(req: Request) {
+  async findAll(req: IGetUserAuthInfoRequest) {
     let searchQuery = {};
 
     let customStages = [
@@ -52,16 +52,72 @@ export class TransactionsService {
       },
     ];
 
-    let result = await paginationWithAggregation(
+    let { balance } = await this.getBalance(req);
+
+    let result: any = await paginationWithAggregation(
       this.TransactionModel,
       req,
       searchQuery,
       customStages,
     );
+    result.balance = balance;
     return {
       success: true,
       message: 'Category fetched successfully',
       result,
+    };
+  }
+
+  async getBalance(req: IGetUserAuthInfoRequest) {
+    const currentMonth = new Date().getMonth() + 1;
+    let startOfMonth: any = new Date(
+      new Date().getFullYear(),
+      currentMonth - 1,
+      1,
+    );
+    let endOfMonth: any = new Date(
+      new Date().getFullYear(),
+      currentMonth,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
+
+    if (req.query && req.query.startDate) {
+      startOfMonth = req.query.startOfMonth;
+    }
+    if (req.query && req.query.endDate) {
+      endOfMonth = req.query.endOfMonth;
+    }
+
+    const incomeTransactions = await this.TransactionModel.find({
+      userId: req.user._id,
+      type: 'INCOME',
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+    }).exec();
+
+    const expenseTransactions = await this.TransactionModel.find({
+      userId: req.user._id,
+      type: 'EXPENSE',
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+    }).exec();
+
+    const income = incomeTransactions.reduce(
+      (sum, transaction) => sum + transaction.amount,
+      0,
+    );
+    const expense = expenseTransactions.reduce(
+      (sum, transaction) => sum + transaction.amount,
+      0,
+    );
+    const balance = income - expense;
+
+    return {
+      income,
+      expense,
+      balance,
     };
   }
 

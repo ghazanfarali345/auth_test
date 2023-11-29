@@ -15,12 +15,6 @@ import {
 import { TransactionEnum } from './enums';
 
 export function toMongoObjectId({ value, key }): Types.ObjectId {
-  console.log(
-    {
-      cd1: Types.ObjectId.isValid(value),
-    },
-    'asdfa',
-  );
   if (
     Types.ObjectId.isValid(value) &&
     new Types.ObjectId(value).toString() === value
@@ -39,8 +33,6 @@ export function toMongoObjectId({ value, key }): Types.ObjectId {
 }
 
 export class CreateTransactionDto {
-
-
   @IsString()
   @IsNotEmpty()
   category: string;

@@ -32,7 +32,11 @@ export class TransactionsController {
   }
 
   @Get('/')
-  findAll(@Query() query: GetTransactionDto, @Req() req: Request) {
+  @UseGuards(AuthGuard)
+  findAll(
+    @Query() query: GetTransactionDto,
+    @Req() req: IGetUserAuthInfoRequest,
+  ) {
     return this.transactionsService.findAll(req);
   }
 
