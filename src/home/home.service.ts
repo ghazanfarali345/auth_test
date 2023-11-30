@@ -80,19 +80,56 @@ export class HomeService {
     };
   }
 
+  // private calculateCategoryPercentage(
+  //   transactions: Transaction[],
+  // ): Record<string, number> {
+  //   const categoryPercentage: Record<string, number> = {};
+
+  //   transactions.forEach((transaction) => {
+  //     if (!categoryPercentage[transaction.category]) {
+  //       categoryPercentage[transaction.category] = 0;
+  //     }
+
+  //     categoryPercentage[transaction.category] +=
+  //       (transaction.amount / this.getTotalAmount(transactions)) * 100;
+  //   });
+
+  //   return categoryPercentage;
+  // }
+
   private calculateCategoryPercentage(
     transactions: Transaction[],
-  ): Record<string, number> {
-    const categoryPercentage: Record<string, number> = {};
+  ): { name: string; percent: number; color: string }[] {
+    const totalAmount = this.getTotalAmount(transactions);
+
+    const categoryPercentageMap: Record<
+      string,
+      { percent: number; color: string }
+    > = {};
 
     transactions.forEach((transaction) => {
-      if (!categoryPercentage[transaction.category]) {
-        categoryPercentage[transaction.category] = 0;
+      const percent = (transaction.amount / totalAmount) * 100;
+
+      if (!categoryPercentageMap[transaction.category]) {
+        categoryPercentageMap[transaction.category] = {
+          percent: 0,
+          color: transaction.color,
+        };
       }
 
-      categoryPercentage[transaction.category] +=
-        (transaction.amount / this.getTotalAmount(transactions)) * 100;
+      categoryPercentageMap[transaction.category].percent += percent;
     });
+
+    // Convert the map to an array of objects
+    const categoryPercentage: {
+      name: string;
+      percent: number;
+      color: string;
+    }[] = Object.keys(categoryPercentageMap).map((category) => ({
+      name: category,
+      percent: parseFloat(categoryPercentageMap[category].percent.toFixed(2)),
+      color: categoryPercentageMap[category].color,
+    }));
 
     return categoryPercentage;
   }

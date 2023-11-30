@@ -1,7 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { IGetUserAuthInfoRequest } from 'src/interfaces';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -13,8 +25,9 @@ export class NotificationsController {
   }
 
   @Get()
-  findAll() {
-    return this.notificationsService.findAll();
+  @UseGuards(AuthGuard)
+  findAll(@Req() req: IGetUserAuthInfoRequest) {
+    return this.notificationsService.findAll(req);
   }
 
   @Get(':id')
@@ -23,7 +36,10 @@ export class NotificationsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateNotificationDto: UpdateNotificationDto,
+  ) {
     return this.notificationsService.update(+id, updateNotificationDto);
   }
 

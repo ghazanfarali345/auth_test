@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { NotificationDocument } from './notification.schema';
+import { IGetUserAuthInfoRequest } from 'src/interfaces';
 
 @Injectable()
 export class NotificationsService {
@@ -22,8 +23,8 @@ export class NotificationsService {
     };
   }
 
-  async findAll() {
-    let notification = await this.notificationModel.find();
+  async findAll(req: IGetUserAuthInfoRequest) {
+    let notification = await this.notificationModel.find({ to: req.user._id });
 
     if (notification.length === 0) {
       throw new HttpException(

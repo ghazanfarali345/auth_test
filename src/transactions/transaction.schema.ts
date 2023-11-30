@@ -31,6 +31,9 @@ export class Transaction {
   @Prop({})
   scheduledCashInDate: Date;
 
+  @Prop({})
+  color: string;
+
   @Prop({ required: true, enum: TransactionEnum })
   type: TransactionEnum;
 }
