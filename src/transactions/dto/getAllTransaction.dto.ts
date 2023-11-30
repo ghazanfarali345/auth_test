@@ -17,12 +17,12 @@ export class GetTransactionDto {
   type?: TransactionEnum;
 
   @IsOptional()
-  @IsDate()
-  toDate?: Date;
+  @IsString()
+  toDate?: string;
 
   @IsOptional()
-  @IsDate()
-  fromDate?: Date;
+  @IsString()
+  fromDate?: string;
 
   @IsOptional()
   @IsString()
