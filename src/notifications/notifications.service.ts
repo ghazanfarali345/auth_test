@@ -24,18 +24,10 @@ export class NotificationsService {
   }
 
   async findAll(req: IGetUserAuthInfoRequest) {
+    console.log(req.user._id);
     let notification = await this.notificationModel.find({ to: req.user._id });
 
-    if (notification.length === 0) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.NO_CONTENT,
-          message: 'No data found',
-          success: false,
-        },
-        HttpStatus.NO_CONTENT,
-      );
-    }
+    console.log({ notification });
 
     return {
       success: true,
@@ -45,11 +37,21 @@ export class NotificationsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} notification`;
+    return 'find one';
   }
 
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    return `This action updates a #${id} notification`;
+  async update(id: string, updateNotificationDto: UpdateNotificationDto) {
+    await this.notificationModel.findOneAndUpdate(
+      { _id: id },
+      updateNotificationDto,
+      { new: true },
+    );
+
+    return {
+      success: true,
+      message: 'Notification updated successfully',
+      data: null,
+    };
   }
 
   remove(id: number) {
