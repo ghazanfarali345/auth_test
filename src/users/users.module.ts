@@ -6,6 +6,7 @@ import { UsersController } from './users.controller';
 import { UserSchema } from './user.schema';
 
 import { UserDevicesModule } from 'src/user-devices/user-devices.module';
+import { CronJob } from 'src/utils/crons';
 
 @Module({
   imports: [
@@ -14,5 +15,6 @@ import { UserDevicesModule } from 'src/user-devices/user-devices.module';
   ],
   providers: [UsersService],
   controllers: [UsersController],
+  exports: [UsersService],
 })
 export class UsersModule {}

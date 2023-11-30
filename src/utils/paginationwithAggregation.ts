@@ -42,6 +42,10 @@ export const paginationWithAggregation = async (
       matchStage.createdAt = { $lte: req.query.toDate };
     }
 
+    if (req.query.type) {
+      matchStage.type = req.query.type;
+    }
+
     pipeline.push({ $match: matchStage });
 
     if (customLookup.length > 0) {

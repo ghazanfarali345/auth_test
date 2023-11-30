@@ -1,26 +1,30 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
+import { ScheduleModule } from '@nestjs/schedule';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './role/role.module';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { UserDevicesModule } from './user-devices/user-devices.module';
 import { SocialAuthModule } from './social-auth/social-auth.module';
-import { JwtModule } from '@nestjs/jwt';
 import { CategoriesModule } from './categories/categories.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { HomeModule } from './home/home.module';
 import { StaticContentModule } from './static-content/static-content.module';
 import { FaqModule } from './faq/faq.module';
+import { CronJob } from './utils/crons';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
@@ -57,6 +61,6 @@ import { FaqModule } from './faq/faq.module';
     FaqModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CronJob],
 })
 export class AppModule {}

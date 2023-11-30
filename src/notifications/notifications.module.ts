@@ -12,5 +12,6 @@ import { NotificationSchema } from './notification.schema';
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],
+  exports: [NotificationsService],
 })
 export class NotificationsModule {}

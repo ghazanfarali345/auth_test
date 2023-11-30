@@ -18,6 +18,9 @@ export class Notification {
   @Prop({ type: () => Boolean, default: false })
   isRead: boolean;
 
+  @Prop({ required: true, enum: ['NORMAL', 'REMINDER', 'BUTTON'] })
+  type: string;
+
   @Prop({ enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' })
   status: string;
 }

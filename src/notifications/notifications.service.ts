@@ -1,15 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { NotificationDocument } from './notification.schema';
 
 @Injectable()
 export class NotificationsService {
-  create(createNotificationDto: CreateNotificationDto) {
-    return 'This action adds a new notification';
+  constructor(
+    @InjectModel('Notification')
+    private readonly notificationModel: Model<NotificationDocument>,
+  ) {}
+
+  async create(createNotificationDto: CreateNotificationDto) {
+    await this.notificationModel.create(createNotificationDto);
+    return {
+      success: true,
+      message: 'Notification created successfully',
+      data: null,
+    };
   }
 
-  findAll() {
-    return `This action returns all notifications`;
+  async findAll() {
+    let notification = await this.notificationModel.find();
+
+    if (notification.length === 0) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NO_CONTENT,
+          message: 'No data found',
+          success: false,
+        },
+        HttpStatus.NO_CONTENT,
+      );
+    }
+
+    return {
+      success: true,
+      message: 'Notification fetched successfully',
+      data: notification,
+    };
   }
 
   findOne(id: number) {

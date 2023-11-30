@@ -40,6 +40,11 @@ export class TransactionsController {
     return this.transactionsService.findAll(req);
   }
 
+  @Get('/test-notif')
+  test(req: IGetUserAuthInfoRequest) {
+    return this.transactionsService.handleNotifications();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.transactionsService.findOne(+id);

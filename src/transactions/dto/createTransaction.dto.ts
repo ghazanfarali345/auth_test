@@ -51,8 +51,8 @@ export class CreateTransactionDto {
 
   @ValidateIf((object) => object.scheduledCashOut === true)
   @IsNotEmpty()
-  @IsDate()
-  scheduledCashOutDate?: Date;
+  @IsString()
+  scheduledCashOutDate?: string;
 
   @IsOptional()
   @IsBoolean()
@@ -60,8 +60,8 @@ export class CreateTransactionDto {
 
   @ValidateIf((object) => object.scheduledCashIn === true)
   @IsNotEmpty()
-  @IsDate()
-  scheduledCashInDate?: Date;
+  @IsString()
+  scheduledCashInDate?: string;
 
   @IsEnum(TransactionEnum)
   type: string;

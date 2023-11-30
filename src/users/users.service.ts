@@ -202,10 +202,12 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<any> {
+    console.log({ email });
     let user: any = await this.userModel.findOne({ email });
 
     // user = Omit(user.toObject(), ['password', '--v', 'otp', 'categories']);
 
+    console.log({ user });
     return {
       success: true,
       message: 'User fetched successfully',
@@ -280,6 +282,7 @@ export class UsersService {
     }
     if (body.type === ResetPasswordTypeEnum.RESET_PASSWORD) {
       let { data: user }: any = await this.findByEmail(body.email);
+      console.log({ user });
 
       if (!user)
         throw new HttpException(

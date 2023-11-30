@@ -7,13 +7,15 @@ import { CreateTransactionDto } from './dto/createTransaction.dto';
 import { UpdateTransactionDto } from './dto/updateTransaction.dto';
 import { Transaction } from './transaction.schema';
 import { paginationWithAggregation } from 'src/utils/paginationwithAggregation';
-import { IGetUserAuthInfoRequest } from 'src/interfaces';
+import { IGetUserAuthInfoRequest, genericResponseType } from 'src/interfaces';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     @InjectModel('Transaction')
-    readonly TransactionModel = Model<Transaction>,
+    readonly TransactionModel: Model<Transaction>,
+    readonly notificationsService: NotificationsService,
   ) {}
 
   async create(req: IGetUserAuthInfoRequest, body: CreateTransactionDto) {
@@ -131,5 +133,65 @@ export class TransactionsService {
 
   remove(id: number) {
     return `This action removes a #${id} transaction`;
+  }
+
+  async buttonNotification(transaction) {
+    await this.notificationsService.create({
+      to: transaction.userId,
+      title: 'Scheduled Transaction',
+      description: `Today is the scheduled date for your transaction: ${transaction.description}`,
+      type: 'BUTTON',
+    });
+  }
+  async reminderNotification(transaction) {
+    await this.notificationsService.create({
+      to: transaction.userId,
+      title: 'Upcoming Transaction',
+      description: `You have an upcoming transaction in _ days: ${transaction.description}`,
+      type: 'REMINDER',
+    });
+  }
+
+  async handleNotifications() {
+    const currentDate = new Date();
+
+    const transactions = await this.TransactionModel.find({
+      $or: [
+        {
+          scheduledCashOut: true,
+          scheduledCashOutDate: { $gte: currentDate },
+        },
+        {
+          scheduledCashIn: true,
+          scheduledCashInDate: { $gte: currentDate },
+        },
+      ],
+    }).exec();
+
+    transactions.forEach(async (transaction) => {
+      // Send notification 2 days before scheduled date
+      const notificationDate = new Date(
+        transaction.scheduledCashOutDate.getTime() - 2 * 24 * 60 * 60 * 1000,
+      );
+
+      console.log(
+        { currentDate, notificationDate },
+        currentDate.toDateString() === notificationDate.toDateString(),
+        new Date(transaction.scheduledCashOutDate).getTime() ===
+          currentDate.getTime(),
+      );
+
+      if (currentDate === notificationDate) {
+        this.reminderNotification(transaction);
+      }
+      if (
+        new Date(transaction.scheduledCashOutDate).getTime() ===
+          currentDate.getTime() ||
+        new Date(transaction.scheduledCashInDate).getTime() ===
+          currentDate.getTime()
+      ) {
+        this.buttonNotification(transaction);
+      }
+    });
   }
 }
