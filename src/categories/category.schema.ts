@@ -13,6 +13,9 @@ export class Category {
   @Prop()
   icon: string;
 
+  @Prop()
+  color: string;
+
   @Prop({ required: true })
   name: string;
 

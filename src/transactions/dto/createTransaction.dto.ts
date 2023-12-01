@@ -65,4 +65,8 @@ export class CreateTransactionDto {
 
   @IsEnum(TransactionEnum)
   type: string;
+
+  @IsString()
+  @IsNotEmpty()
+  color: string;
 }

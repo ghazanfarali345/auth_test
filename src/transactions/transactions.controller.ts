@@ -50,16 +50,13 @@ export class TransactionsController {
     return this.transactionsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
-  ) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+  @Patch('/add-schedule-transaction/:id')
+  update(@Param('id') id: string) {
+    return this.transactionsService.update(id, { transactionFulfilled: true });
   }
 
-  @Delete(':id')
+  @Delete('/delete/:id')
   remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+    return this.transactionsService.remove({ _id: id });
   }
 }

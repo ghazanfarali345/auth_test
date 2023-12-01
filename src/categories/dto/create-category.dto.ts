@@ -15,4 +15,8 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   @IsEnum(TypeEnum)
   type: string;
+
+  @IsString()
+  @IsNotEmpty()
+  color: string;
 }

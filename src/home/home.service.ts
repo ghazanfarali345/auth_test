@@ -15,6 +15,7 @@ export class HomeService {
   }
 
   async findAll(req: IGetUserAuthInfoRequest) {
+    ///   The below piece of code in this comment block have to convert in reuseable code
     const currentMonth = new Date().getMonth() + 1;
     let startOfMonth: any = new Date(
       new Date().getFullYear(),
@@ -42,6 +43,7 @@ export class HomeService {
       await this.transactionService.TransactionModel.find({
         userId: req.user._id,
         type: 'INCOME',
+        transactionFulfilled: true,
         createdAt: { $gte: startOfMonth, $lte: endOfMonth },
       }).exec();
 
@@ -49,6 +51,7 @@ export class HomeService {
       await this.transactionService.TransactionModel.find({
         userId: req.user._id,
         type: 'EXPENSE',
+        transactionFulfilled: true,
         createdAt: { $gte: startOfMonth, $lte: endOfMonth },
       }).exec();
 
@@ -60,6 +63,8 @@ export class HomeService {
       (sum, transaction) => sum + transaction.amount,
       0,
     );
+
+    ///   The above piece of code have to convert in reuseable code
     const balance = income - expense;
 
     const incomeCategories =
@@ -79,23 +84,6 @@ export class HomeService {
       },
     };
   }
-
-  // private calculateCategoryPercentage(
-  //   transactions: Transaction[],
-  // ): Record<string, number> {
-  //   const categoryPercentage: Record<string, number> = {};
-
-  //   transactions.forEach((transaction) => {
-  //     if (!categoryPercentage[transaction.category]) {
-  //       categoryPercentage[transaction.category] = 0;
-  //     }
-
-  //     categoryPercentage[transaction.category] +=
-  //       (transaction.amount / this.getTotalAmount(transactions)) * 100;
-  //   });
-
-  //   return categoryPercentage;
-  // }
 
   private calculateCategoryPercentage(
     transactions: Transaction[],

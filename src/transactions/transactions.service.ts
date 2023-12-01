@@ -21,6 +21,8 @@ export class TransactionsService {
   async create(req: IGetUserAuthInfoRequest, body: CreateTransactionDto) {
     let transaction = await this.TransactionModel.create({
       userId: req.user._id,
+      transactionFulfilled:
+        body.scheduledCashIn || body.scheduledCashOut ? false : true,
       ...body,
     });
 
@@ -42,7 +44,9 @@ export class TransactionsService {
   }
 
   async findAll(req: IGetUserAuthInfoRequest) {
-    let searchQuery = {};
+    let searchQuery = {
+      userId: req.user._id,
+    };
 
     let customStages = [
       {
@@ -97,12 +101,14 @@ export class TransactionsService {
     const incomeTransactions = await this.TransactionModel.find({
       userId: req.user._id,
       type: 'INCOME',
+      transactionFulfilled: true,
       createdAt: { $gte: startOfMonth, $lte: endOfMonth },
     }).exec();
 
     const expenseTransactions = await this.TransactionModel.find({
       userId: req.user._id,
       type: 'EXPENSE',
+      transactionFulfilled: true,
       createdAt: { $gte: startOfMonth, $lte: endOfMonth },
     }).exec();
 
@@ -127,12 +133,28 @@ export class TransactionsService {
     return `This action returns a #${id} transaction`;
   }
 
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return `This action updates a #${id} transaction`;
+  async update(id: string, updateTransactionDto: UpdateTransactionDto) {
+    await this.TransactionModel.findByIdAndUpdate(
+      { _id: id },
+      updateTransactionDto,
+      { new: true },
+    );
+
+    return {
+      success: true,
+      message: 'Transaction updated successfully',
+      data: null,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} transaction`;
+  async remove(filter: { [key: string]: any }) {
+    await this.TransactionModel.findOneAndDelete(filter);
+
+    return {
+      success: true,
+      message: 'Transaction removed successfully',
+      data: null,
+    };
   }
 
   async buttonNotification(transaction) {

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { TransactionEnum } from './dto/enums';
 import { User } from 'src/users/user.schema';
 
@@ -18,6 +18,9 @@ export class Transaction {
 
   @Prop({})
   description: string;
+
+  @Prop({ default: true })
+  transactionFulfilled: boolean;
 
   @Prop({ default: false })
   scheduledCashOut: boolean;
