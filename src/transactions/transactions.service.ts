@@ -217,7 +217,7 @@ export class TransactionsService {
           currentDate.getTime(),
       );
 
-      if (currentDate === notificationDate) {
+      if (currentDate.toDateString() === notificationDate.toDateString()) {
         this.reminderNotification(transaction);
       }
       if (
