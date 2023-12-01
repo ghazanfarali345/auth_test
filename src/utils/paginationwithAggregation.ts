@@ -35,11 +35,15 @@ export const paginationWithAggregation = async (
     }
 
     if (req.query.fromDate) {
-      matchStage.createdAt = { $gte: req.query.fromDate };
+      let date = new Date(req.query.fromDate as any);
+      // matchStage.createdAt = { $gte: req.query.fromDate };
+      matchStage.createdAt = { $gte: date };
     }
 
     if (req.query.toDate) {
-      matchStage.createdAt = { $lte: req.query.toDate };
+      let date = new Date(req.query.fromDate as any);
+      // matchStage.createdAt = { $lte: req.query.toDate };
+      matchStage.createdAt = { $lte: date };
     }
 
     if (req.query.type) {

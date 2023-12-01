@@ -175,6 +175,7 @@ export class TransactionsService {
       title: 'Scheduled Transaction',
       description: `Today is the scheduled date for your transaction: ${transaction.description}`,
       type: 'BUTTON',
+      transactionId: transaction._id,
     });
   }
   async reminderNotification(transaction) {
@@ -183,6 +184,7 @@ export class TransactionsService {
       title: 'Upcoming Transaction',
       description: `You have an upcoming transaction in _ days: ${transaction.description}`,
       type: 'REMINDER',
+      transactionId: transaction._id,
     });
   }
 
