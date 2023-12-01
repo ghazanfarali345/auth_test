@@ -386,6 +386,7 @@ export class UsersService {
     if (req.query.type) {
       typeFilter = { 'categories.type': req.query.type };
     }
+    console.log(req.user._id);
 
     let categories = await this.userModel.aggregate([
       {
@@ -400,10 +401,20 @@ export class UsersService {
         },
       },
       {
+        $unwind: '$categories',
+      },
+      {
         $match: typeFilter,
       },
       {
+        $group: {
+          _id: '$_id',
+          categories: { $push: '$categories' },
+        },
+      },
+      {
         $project: {
+          _id: 0,
           categories: 1,
         },
       },
