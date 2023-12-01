@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
+
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/createTransaction.dto';
 import { UpdateTransactionDto } from './dto/updateTransaction.dto';
@@ -51,12 +52,16 @@ export class TransactionsController {
   }
 
   @Patch('/add-schedule-transaction/:id')
-  update(@Param('id') id: string) {
-    return this.transactionsService.update(id, { transactionFulfilled: true });
+  update(@Req() req: Request, @Param('id') id: string) {
+    return this.transactionsService.update(
+      id,
+      { transactionFulfilled: true },
+      req,
+    );
   }
 
   @Delete('/delete/:id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove({ _id: id });
+  remove(@Req() req: Request, @Param('id') id: string) {
+    return this.transactionsService.remove({ _id: id }, req);
   }
 }

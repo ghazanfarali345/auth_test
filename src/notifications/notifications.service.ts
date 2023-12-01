@@ -54,7 +54,13 @@ export class NotificationsService {
     };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
+  async remove(filter: { [key: string]: any }) {
+    await this.notificationModel.findOneAndDelete(filter);
+
+    return {
+      success: true,
+      message: 'Notification deleted successfully',
+      data: null,
+    };
   }
 }

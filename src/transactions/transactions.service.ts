@@ -133,12 +133,20 @@ export class TransactionsService {
     return `This action returns a #${id} transaction`;
   }
 
-  async update(id: string, updateTransactionDto: UpdateTransactionDto) {
+  async update(
+    id: string,
+    updateTransactionDto: UpdateTransactionDto,
+    req: Request,
+  ) {
     await this.TransactionModel.findByIdAndUpdate(
       { _id: id },
       updateTransactionDto,
       { new: true },
     );
+
+    if (req.query.notifId) {
+      await this.notificationsService.remove({ _id: req.query.notifId });
+    }
 
     return {
       success: true,
@@ -147,8 +155,12 @@ export class TransactionsService {
     };
   }
 
-  async remove(filter: { [key: string]: any }) {
+  async remove(filter: { [key: string]: any }, req: Request) {
     await this.TransactionModel.findOneAndDelete(filter);
+
+    if (req.query.notifId) {
+      await this.notificationsService.remove({ _id: req.query.notifId });
+    }
 
     return {
       success: true,

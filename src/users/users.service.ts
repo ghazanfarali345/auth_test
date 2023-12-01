@@ -136,6 +136,16 @@ export class UsersService {
       },
     );
 
+    let payload = {
+      _id: user._id,
+      email: user.email,
+      fullName: user.fullName,
+    };
+
+    let token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+    });
+
     if (!updateUser)
       throw new HttpException(
         {
@@ -151,6 +161,7 @@ export class UsersService {
       success: true,
       message: 'User verified successfully',
       data: null,
+      token,
     };
   }
 
