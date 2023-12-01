@@ -160,7 +160,7 @@ export class UsersService {
     return {
       success: true,
       message: 'User verified successfully',
-      data: null,
+      data: user,
       token,
     };
   }
