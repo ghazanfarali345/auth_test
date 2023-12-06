@@ -5,6 +5,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -18,10 +21,14 @@ import { HomeModule } from './home/home.module';
 import { StaticContentModule } from './static-content/static-content.module';
 import { FaqModule } from './faq/faq.module';
 import { CronJob } from './utils/crons';
+import firebaseConfig from 'firebase.config';
+import { PushNotificationsModule } from './push-notifications/push-notifications.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
+      load: [firebaseConfig],
       envFilePath: '.env',
     }),
     ScheduleModule.forRoot(),
@@ -49,6 +56,10 @@ import { CronJob } from './utils/crons';
         ? process.env.MONGO_URL
         : process.env.MONGO_URL_ATLAS,
     ),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'images'),
+      serveRoot: '',
+    }),
     UsersModule,
     RoleModule,
     UserDevicesModule,
@@ -59,6 +70,7 @@ import { CronJob } from './utils/crons';
     HomeModule,
     StaticContentModule,
     FaqModule,
+    PushNotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CronJob],

@@ -1,6 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as admin from 'firebase-admin';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,6 +17,15 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
+  const configService = app.get(ConfigService);
+  const firebaseConfig = configService.get('firebase');
+
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    ...firebaseConfig,
+  });
+
   await app.listen(3000);
 }
 bootstrap();

@@ -9,6 +9,7 @@ import { Transaction } from './transaction.schema';
 import { paginationWithAggregation } from 'src/utils/paginationwithAggregation';
 import { IGetUserAuthInfoRequest, genericResponseType } from 'src/interfaces';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { PushNotificationService } from 'src/utils/pushNotification.service';
 
 @Injectable()
 export class TransactionsService {
@@ -16,6 +17,7 @@ export class TransactionsService {
     @InjectModel('Transaction')
     readonly TransactionModel: Model<Transaction>,
     readonly notificationsService: NotificationsService,
+    readonly pushNotificationService: PushNotificationService,
   ) {}
 
   async create(req: IGetUserAuthInfoRequest, body: CreateTransactionDto) {
@@ -177,6 +179,8 @@ export class TransactionsService {
       type: 'BUTTON',
       transactionId: transaction._id,
     });
+
+    // this.pushNotificationService.sendNotification('token', 'title', 'body');
   }
   async reminderNotification(transaction) {
     await this.notificationsService.create({
@@ -205,26 +209,24 @@ export class TransactionsService {
     }).exec();
 
     transactions.forEach(async (transaction) => {
-      // Send notification 2 days before scheduled date
       const notificationDate = new Date(
         transaction.scheduledCashOutDate.getTime() - 2 * 24 * 60 * 60 * 1000,
       );
 
       console.log(
         { currentDate, notificationDate },
+        { s: transaction.scheduledCashOutDate },
         currentDate.toDateString() === notificationDate.toDateString(),
-        new Date(transaction.scheduledCashOutDate).getTime() ===
-          currentDate.getTime(),
+        transaction.scheduledCashOutDate.toDateString() ===
+          currentDate.toDateString(),
       );
 
       if (currentDate.toDateString() === notificationDate.toDateString()) {
         this.reminderNotification(transaction);
       }
       if (
-        new Date(transaction.scheduledCashOutDate).getTime() ===
-          currentDate.getTime() ||
-        new Date(transaction.scheduledCashInDate).getTime() ===
-          currentDate.getTime()
+        transaction.scheduledCashOutDate.toDateString() ===
+        currentDate.toDateString()
       ) {
         this.buttonNotification(transaction);
       }

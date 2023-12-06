@@ -44,6 +44,9 @@ export class User {
 
   @Prop()
   stripeCustomerId: string;
+
+  @Prop()
+  deviceToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

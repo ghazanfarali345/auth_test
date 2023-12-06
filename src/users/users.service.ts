@@ -87,11 +87,11 @@ export class UsersService {
       });
     user = Omit(user, ['password', 'otp', '__v']);
 
-    await this.userDevicesService.create({
-      userId: user._id,
-      deviceToken: userData.deviceToken,
-      deviceType: userData.deviceType,
-    });
+    // await this.userDevicesService.create({
+    //   userId: user._id,
+    //   deviceToken: userData.deviceToken,
+    //   deviceType: userData.deviceType,
+    // });
 
     return {
       success: true,
@@ -203,6 +203,11 @@ export class UsersService {
     });
 
     user = Omit(user.toObject(), ['password', 'otp', '__v']);
+
+    this.userModel.findOneAndUpdate({
+      _id: user._id,
+      deviceToken: userData.deviceToken,
+    });
 
     return {
       success: true,

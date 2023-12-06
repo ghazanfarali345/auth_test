@@ -33,11 +33,11 @@ export class CreateUserDTO {
   @IsNotEmpty()
   pushNotification?: boolean;
 
-  @ValidateIf((object) => object.pushNotification === true)
-  @IsString()
-  @IsNotEmpty()
-  @IsEnum(DeviceTypeEnum)
-  deviceType?: DeviceTypeEnum;
+  // @ValidateIf((object) => object.pushNotification === true)
+  // @IsString()
+  // @IsNotEmpty()
+  // @IsEnum(DeviceTypeEnum)
+  // deviceType?: DeviceTypeEnum;
 
   @ValidateIf((object) => object.pushNotification === true)
   @IsString()

@@ -11,4 +11,8 @@ export class LoginDTO {
   @IsEnum(PlatformEnum)
   @IsNotEmpty()
   platform: PlatformEnum;
+
+  @IsEnum(PlatformEnum)
+  @IsNotEmpty()
+  deviceToken: PlatformEnum;
 }
