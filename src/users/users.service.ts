@@ -19,6 +19,7 @@ import { UserDevicesService } from '../user-devices/user-devices.service';
 import { IGetUserAuthInfoRequest, genericResponseType } from 'src/interfaces';
 import { Request } from 'express';
 import { LogutDTO } from './dtos/logoutDTO';
+import { pagination } from 'src/utils/pagination';
 
 @Injectable()
 export class UsersService {
@@ -214,6 +215,16 @@ export class UsersService {
       message: 'Login successful',
       data: user,
       token: token as any,
+    };
+  }
+
+  async findAll(req: IGetUserAuthInfoRequest) {
+    let users = await pagination(this.userModel, req);
+
+    return {
+      success: true,
+      message: 'User fetched successfully',
+      data: users,
     };
   }
 

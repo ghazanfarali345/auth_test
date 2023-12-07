@@ -66,6 +66,12 @@ export class UsersController {
     return this.usersService.removeCategoryToUser(req.user._id, body);
   }
 
+  @Get('/getAllUsers')
+  @UseGuards(AuthGuard)
+  findAllUsers(@Req() req: IGetUserAuthInfoRequest) {
+    return this.usersService.findAll(req);
+  }
+
   @Get('/myCategories')
   @UseGuards(AuthGuard)
   getMyCategories(@Req() req: IGetUserAuthInfoRequest) {

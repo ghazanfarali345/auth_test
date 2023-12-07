@@ -12,7 +12,7 @@ export class LoginDTO {
   @IsNotEmpty()
   platform: PlatformEnum;
 
-  @IsEnum(PlatformEnum)
+  @IsString()
   @IsNotEmpty()
   deviceToken: PlatformEnum;
 }
