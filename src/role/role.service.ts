@@ -13,7 +13,7 @@ export class RoleService {
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<genericResponseType> {
-    let role = await this.roleModel.create(createRoleDto);
+    const role = await this.roleModel.create(createRoleDto);
     return {
       data: role,
       message: 'Role created successfully',

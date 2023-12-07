@@ -87,14 +87,14 @@ export class UsersController {
   @Patch('/updateProfile')
   @UseGuards(AuthGuard)
   updateProfile(@Req() req: IGetUserAuthInfoRequest) {
-    let body: UpdateDTO = req.body;
+    const body: UpdateDTO = req.body;
     return this.usersService.findOneAndUpdate({ email: req.user.email }, body);
   }
 
   @Post('/logout')
   @UseGuards(AuthGuard)
   logout(@Req() req: IGetUserAuthInfoRequest) {
-    let { deviceToken } = req.body;
+    const { deviceToken } = req.body;
     return this.usersService.logout(req, { deviceToken });
   }
 }

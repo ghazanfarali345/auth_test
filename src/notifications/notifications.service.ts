@@ -25,7 +25,9 @@ export class NotificationsService {
 
   async findAll(req: IGetUserAuthInfoRequest) {
     console.log(req.user._id);
-    let notification = await this.notificationModel.find({ to: req.user._id });
+    const notification = await this.notificationModel.find({
+      to: req.user._id,
+    });
 
     console.log({ notification });
 

@@ -16,7 +16,7 @@ export const paginationWithAggregation = async (
 
     const keyword: string = req.query.search?.toString() || '';
     const order = req.query.order?.toString() || '';
-    let showAll = !!req.query.showall;
+    const showAll = !!req.query.showall;
     let totalDoc = [];
     const pipeline = [];
 
@@ -35,13 +35,13 @@ export const paginationWithAggregation = async (
     }
 
     if (req.query.fromDate) {
-      let date = new Date(req.query.fromDate as any);
+      const date = new Date(req.query.fromDate as any);
       // matchStage.createdAt = { $gte: req.query.fromDate };
       matchStage.createdAt = { $gte: date };
     }
 
     if (req.query.toDate) {
-      let date = new Date(req.query.fromDate as any);
+      const date = new Date(req.query.fromDate as any);
       // matchStage.createdAt = { $lte: req.query.toDate };
       matchStage.createdAt = { $lte: date };
     }
@@ -64,7 +64,7 @@ export const paginationWithAggregation = async (
 
     // Sort stage
     if (req.query.sort) {
-      let sort = {
+      const sort = {
         [req.query.sort.toString()]: 1,
       };
       if (order.toLowerCase() === 'desc') {

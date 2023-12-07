@@ -21,7 +21,7 @@ export class TransactionsService {
   ) {}
 
   async create(req: IGetUserAuthInfoRequest, body: CreateTransactionDto) {
-    let transaction = await this.TransactionModel.create({
+    const transaction = await this.TransactionModel.create({
       userId: req.user._id,
       transactionFulfilled:
         body.scheduledCashIn || body.scheduledCashOut ? false : true,
@@ -46,11 +46,11 @@ export class TransactionsService {
   }
 
   async findAll(req: IGetUserAuthInfoRequest) {
-    let searchQuery = {
+    const searchQuery = {
       userId: req.user._id,
     };
 
-    let customStages = [
+    const customStages = [
       {
         $group: {
           _id: '$category',
@@ -60,9 +60,9 @@ export class TransactionsService {
       },
     ];
 
-    let { balance } = await this.getBalance(req);
+    const { balance } = await this.getBalance(req);
 
-    let result: any = await paginationWithAggregation(
+    const result: any = await paginationWithAggregation(
       this.TransactionModel,
       req,
       searchQuery,

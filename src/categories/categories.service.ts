@@ -15,7 +15,7 @@ export class CategoriesService {
   ) {}
 
   async create(body: CreateCategoryDto) {
-    let category = await this.categoryModel.create(body);
+    const category = await this.categoryModel.create(body);
 
     if (!category)
       throw new HttpException(
@@ -35,7 +35,7 @@ export class CategoriesService {
   }
 
   async findAll(req: Request) {
-    let result = await pagination(this.categoryModel, req, {});
+    const result = await pagination(this.categoryModel, req, {});
     return {
       success: true,
       message: 'Category fetched successfully',
@@ -44,7 +44,7 @@ export class CategoriesService {
   }
 
   async findOne(filter: { [key: string]: any }) {
-    let category = await this.categoryModel.findOne({
+    const category = await this.categoryModel.findOne({
       isDeleted: false,
       ...filter,
     });

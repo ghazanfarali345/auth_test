@@ -26,7 +26,7 @@ export class StaticContentService {
   }
 
   async findOne(type: string) {
-    let data = await this.contentModel.findOne({ type });
+    const data = await this.contentModel.findOne({ type });
 
     return {
       success: true,

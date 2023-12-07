@@ -19,7 +19,7 @@ export const pagination = async (
 
     query = Model.collection;
 
-    let searchQuery: any = {
+    const searchQuery: any = {
       $or: [{ isDeleted: { $exists: false } }, { isDeleted: false }],
       ...customQuery,
     };
@@ -67,7 +67,7 @@ export const pagination = async (
     query = query.limit(limit).skip(startIndex);
 
     if (req.query.sort) {
-      let sort = {
+      const sort = {
         [req.query.sort.toString()]: 1,
       };
       if (order.toLowerCase() === 'desc') {

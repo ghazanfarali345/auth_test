@@ -12,7 +12,7 @@ export class FaqService {
   ) {}
 
   async create(createFaqDto: CreateFaqDto) {
-    let faq = await this.faqModel.create(createFaqDto);
+    const faq = await this.faqModel.create(createFaqDto);
 
     return {
       success: true,
@@ -22,7 +22,7 @@ export class FaqService {
   }
 
   async findAll() {
-    let faq = await this.faqModel.find();
+    const faq = await this.faqModel.find();
 
     return {
       success: true,
@@ -32,7 +32,7 @@ export class FaqService {
   }
 
   async findOne(id: ObjectId) {
-    let faq = await this.faqModel.findOne({ _id: id });
+    const faq = await this.faqModel.findOne({ _id: id });
 
     return {
       success: true,
@@ -42,7 +42,7 @@ export class FaqService {
   }
 
   async update(filter: any, updateFaqDto: CreateFaqDto) {
-    let faq = await this.faqModel.findOneAndUpdate(filter, updateFaqDto, {
+    const faq = await this.faqModel.findOneAndUpdate(filter, updateFaqDto, {
       new: true,
     });
 

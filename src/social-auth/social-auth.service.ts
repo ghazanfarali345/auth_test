@@ -26,14 +26,14 @@ export class SocialAuthService {
       result = await this.socialAuthModel.create(body);
     }
 
-    let payload = {
+    const payload = {
       fullName: result.fullName,
       email: result.email,
       platform: result.platform,
       clientId: result.clientId,
     };
 
-    let token = this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
     message = 'Login successful';

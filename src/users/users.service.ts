@@ -36,7 +36,7 @@ export class UsersService {
 
   async register(
     userData: CreateUserDTO,
-  ): Promise<UserDocument | String | genericResponseType> {
+  ): Promise<UserDocument | string | genericResponseType> {
     const existingUser = await this.findByEmail(userData.email);
 
     if (existingUser.data)
@@ -53,7 +53,7 @@ export class UsersService {
     const hashedPassword = await this.hashPassword(userData.password);
     userData.password = hashedPassword;
 
-    let newUserData = {
+    const newUserData = {
       ...userData,
       otp: Utils.OTPGenerator(),
     };
@@ -137,13 +137,13 @@ export class UsersService {
       },
     );
 
-    let payload = {
+    const payload = {
       _id: user._id,
       email: user.email,
       fullName: user.fullName,
     };
 
-    let token = this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
 
@@ -180,7 +180,7 @@ export class UsersService {
         },
         HttpStatus.BAD_REQUEST,
       );
-    let password = await bcrypt.compare(userData.password, user.password);
+    const password = await bcrypt.compare(userData.password, user.password);
 
     if (!password) {
       throw new HttpException(
@@ -193,13 +193,13 @@ export class UsersService {
       );
     }
 
-    let payload = {
+    const payload = {
       _id: user._id,
       email: user.email,
       fullName: user.fullName,
     };
 
-    let token = this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
 
@@ -219,7 +219,7 @@ export class UsersService {
   }
 
   async findAll(req: IGetUserAuthInfoRequest) {
-    let users = await pagination(this.userModel, req);
+    const users = await pagination(this.userModel, req);
 
     return {
       success: true,
@@ -230,7 +230,7 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<any> {
     console.log({ email });
-    let user: any = await this.userModel.findOne({ email });
+    const user: any = await this.userModel.findOne({ email });
 
     // user = Omit(user.toObject(), ['password', '--v', 'otp', 'categories']);
 
@@ -243,7 +243,7 @@ export class UsersService {
   }
 
   async findOneAndUpdate(filter: UpdateUserDTO, data: UpdateUserDTO) {
-    let updatedUser = await this.userModel
+    const updatedUser = await this.userModel
       .findOneAndUpdate(filter, data, { new: true })
       .exec();
     return {
@@ -254,7 +254,7 @@ export class UsersService {
   }
 
   async sendOtp(body: SendOtpDTO) {
-    let { data: user }: any = await this.findByEmail(body.email);
+    const { data: user }: any = await this.findByEmail(body.email);
 
     if (!user)
       throw new HttpException(
@@ -262,7 +262,7 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
 
-    let otp = Utils.OTPGenerator();
+    const otp = Utils.OTPGenerator();
     let result: any;
     if (body.type === SendOtpTypeEnum.REGISTER_USER) {
       this.mailerService.sendMail({
@@ -308,7 +308,7 @@ export class UsersService {
       );
     }
     if (body.type === ResetPasswordTypeEnum.RESET_PASSWORD) {
-      let { data: user }: any = await this.findByEmail(body.email);
+      const { data: user }: any = await this.findByEmail(body.email);
       console.log({ user });
 
       if (!user)
@@ -317,7 +317,7 @@ export class UsersService {
           HttpStatus.BAD_REQUEST,
         );
 
-      let password = await bcrypt.compare(body.password, user.password);
+      const password = await bcrypt.compare(body.password, user.password);
 
       if (password)
         throw new HttpException(
@@ -336,8 +336,8 @@ export class UsersService {
       );
     }
     if (body.type === ResetPasswordTypeEnum.CHANGE_PASSWORD) {
-      let { data: user }: any = await this.findByEmail(body.email);
-      let password = await bcrypt.compare(body.oldPassword, user.password);
+      const { data: user }: any = await this.findByEmail(body.email);
+      const password = await bcrypt.compare(body.oldPassword, user.password);
 
       if (!password)
         throw new HttpException(
@@ -404,7 +404,7 @@ export class UsersService {
     }
     console.log(req.user._id);
 
-    let categories = await this.userModel.aggregate([
+    const categories = await this.userModel.aggregate([
       {
         $match: { _id: new Types.ObjectId(req.user._id) },
       },
@@ -436,7 +436,7 @@ export class UsersService {
       },
     ]);
 
-    let result = categories.length ? categories[0].categories : categories;
+    const result = categories.length ? categories[0].categories : categories;
 
     return {
       success: true,
@@ -446,7 +446,7 @@ export class UsersService {
   }
 
   async logout(req: IGetUserAuthInfoRequest, data: LogutDTO) {
-    let tok = await this.userDevicesService.remove({
+    const tok = await this.userDevicesService.remove({
       userId: new Types.ObjectId(req.user._id),
       deviceToken: data.deviceToken,
     });
