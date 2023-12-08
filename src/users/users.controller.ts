@@ -7,6 +7,8 @@ import {
   UseGuards,
   Patch,
   Get,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LoginDTO } from './dtos/loginUser.dto';
@@ -19,6 +21,22 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { genericResponseType, IGetUserAuthInfoRequest } from 'src/interfaces';
 import { UpdateUserDTO } from './dtos/updateUser.dto';
 import { UpdateDTO } from './dtos/updateDTO';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import path from 'path';
+import { extname } from 'path';
+
+export const storage = {
+  storage: diskStorage({
+    destination: './images',
+    filename: (req: IGetUserAuthInfoRequest, file, cb) => {
+      const filename: string = req?.user._id + '123';
+      const extension: string = extname(file.originalname);
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
 
 @Controller('users')
 export class UsersController {
@@ -86,9 +104,21 @@ export class UsersController {
 
   @Patch('/updateProfile')
   @UseGuards(AuthGuard)
-  updateProfile(@Req() req: IGetUserAuthInfoRequest) {
-    const body: UpdateDTO = req.body;
+  @UseInterceptors(FileInterceptor('profileImage', storage))
+  updateProfile(
+    @Req() req: IGetUserAuthInfoRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    console.log({ file });
+    let body: UpdateDTO = req.body;
+    body.profileImage = `http://${req.get('host')}/${file.filename}`;
     return this.usersService.findOneAndUpdate({ email: req.user.email }, body);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
   }
 
   @Post('/logout')

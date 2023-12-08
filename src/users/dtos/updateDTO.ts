@@ -11,5 +11,5 @@ export class UpdateDTO {
 
   @IsOptional()
   @IsNotEmpty()
-  image?: string;
+  profileImage?: string;
 }

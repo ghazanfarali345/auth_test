@@ -7,6 +7,10 @@ export class UpdateUserDTO {
 
   @IsOptional()
   @IsNotEmpty()
+  profileImage?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
   phoneNo?: string;
 
   @IsEmail()
