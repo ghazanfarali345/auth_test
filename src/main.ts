@@ -7,7 +7,6 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: true,
     bodyParser: true,
   });
   app.useGlobalPipes(
@@ -15,6 +14,8 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
+  app.enableCors();
 
   const configService = app.get(ConfigService);
   const firebaseConfig = configService.get('firebase');
