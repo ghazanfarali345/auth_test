@@ -111,14 +111,12 @@ export class UsersController {
   ) {
     console.log({ file });
     let body: UpdateDTO = req.body;
-    body.profileImage = `http://${req.get('host')}/${file.filename}`;
-    return this.usersService.findOneAndUpdate({ email: req.user.email }, body);
-  }
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file', storage))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
+    if (file && file.filename) {
+      body.profileImage = `http://${req.get('host')}/${file?.filename}`;
+    }
+
+    return this.usersService.findOneAndUpdate({ email: req.user.email }, body);
   }
 
   @Post('/logout')

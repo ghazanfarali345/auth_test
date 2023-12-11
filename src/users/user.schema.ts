@@ -24,8 +24,8 @@ export class User {
   @Prop({})
   pushNotificationEnabled: boolean;
 
-  // @Prop({ type: Types.ObjectId, ref: 'Role', required: true })
-  // role: Types.ObjectId;
+  @Prop({ enum: ['USER', 'ADMIN'], default: 'USER' })
+  role: string;
 
   @Prop({ ref: () => Category })
   categories: [Types.ObjectId];
