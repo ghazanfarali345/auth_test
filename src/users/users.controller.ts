@@ -30,6 +30,7 @@ export const storage = {
   storage: diskStorage({
     destination: './images',
     filename: (req: IGetUserAuthInfoRequest, file, cb) => {
+      console.log({ file }, 'storage');
       const filename: string = req?.user._id + '123';
       const extension: string = extname(file.originalname);
 
@@ -75,7 +76,7 @@ export class UsersController {
   @Patch('/addCategoryToUser')
   @UseGuards(AuthGuard)
   addCategoryToUser(@Req() req: IGetUserAuthInfoRequest, @Body() body: any) {
-    return this.usersService.addCategoryToUser(req.user._id, body);
+    return this.usersService.addCategoryToUser(req.user._id, body, req);
   }
 
   @Patch('/removeCategoryToUser')
@@ -107,13 +108,16 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('profileImage', storage))
   updateProfile(
     @Req() req: IGetUserAuthInfoRequest,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File | any,
   ) {
-    console.log({ file });
     let body: UpdateDTO = req.body;
 
-    if (file && file.filename) {
-      body.profileImage = `http://${req.get('host')}/${file?.filename}`;
+    console.log({ body });
+
+    console.log({ file }, 'asdfa');
+    if (file) {
+      console.log({ file }, 'asdfa');
+      // body.profileImage = `http://${req.get('host')}/${file?.filename}`;
     }
 
     return this.usersService.findOneAndUpdate({ email: req.user.email }, body);

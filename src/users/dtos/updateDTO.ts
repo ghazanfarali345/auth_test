@@ -1,4 +1,10 @@
-import { IsEmail, IsString, IsOptional, IsNotEmpty } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  IsObject,
+} from 'class-validator';
 
 export class UpdateDTO {
   @IsOptional()
@@ -11,5 +17,7 @@ export class UpdateDTO {
 
   @IsOptional()
   @IsNotEmpty()
-  profileImage?: string;
+  // @IsObject()
+  // @IsString()
+  profileImage?: any;
 }

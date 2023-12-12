@@ -16,6 +16,9 @@ export class Category {
   @Prop()
   color: string;
 
+  @Prop()
+  userId: string;
+
   @Prop({ required: true })
   name: string;
 

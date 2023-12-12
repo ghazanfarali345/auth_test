@@ -6,12 +6,13 @@ import { UsersController } from './users.controller';
 import { UserSchema } from './user.schema';
 
 import { UserDevicesModule } from 'src/user-devices/user-devices.module';
-import { CronJob } from 'src/utils/crons';
+import { CategoriesModule } from 'src/categories/categories.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     UserDevicesModule,
+    CategoriesModule,
   ],
   providers: [UsersService],
   controllers: [UsersController],

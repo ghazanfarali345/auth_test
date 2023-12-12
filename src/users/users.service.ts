@@ -20,6 +20,7 @@ import { IGetUserAuthInfoRequest, genericResponseType } from 'src/interfaces';
 import { Request } from 'express';
 import { LogutDTO } from './dtos/logoutDTO';
 import { pagination } from 'src/utils/pagination';
+import { CategoriesService } from 'src/categories/categories.service';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,7 @@ export class UsersService {
     private jwtService: JwtService,
     private readonly mailerService: MailerService,
     private readonly userDevicesService: UserDevicesService,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   async hashPassword(password: string): Promise<string> {
@@ -242,7 +244,8 @@ export class UsersService {
     };
   }
 
-  async findOneAndUpdate(filter: UpdateUserDTO, data: UpdateUserDTO) {
+  async findOneAndUpdate(filter: UpdateUserDTO, data: any) {
+    console.log({ data: data._parts }, 'service');
     const updatedUser = await this.userModel
       .findOneAndUpdate(filter, data, { new: true })
       .exec();
@@ -365,14 +368,40 @@ export class UsersService {
     }
   }
 
-  async addCategoryToUser(userId: string, body: any) {
-    await this.userModel
-      .findOneAndUpdate(
-        { _id: new Types.ObjectId(userId) },
-        { $push: { categories: new Types.ObjectId(body.categoryId) } },
-        { new: true },
-      )
-      .exec();
+  async addCategoryToUser(
+    userId: string,
+    body: any,
+    req: IGetUserAuthInfoRequest,
+  ) {
+    if (body.name) {
+      let userId = req.user._id;
+      body.userId = userId;
+      let userCategoryCreated: any = await this.categoriesService.create(body);
+
+      console.log({ userCategoryCreated });
+
+      if (userCategoryCreated) {
+        await this.userModel
+          .findOneAndUpdate(
+            { _id: new Types.ObjectId(userId) },
+            {
+              $push: {
+                categories: new Types.ObjectId(userCategoryCreated?.data?._id),
+              },
+            },
+            { new: true },
+          )
+          .exec();
+      }
+    } else {
+      await this.userModel
+        .findOneAndUpdate(
+          { _id: new Types.ObjectId(userId) },
+          { $push: { categories: new Types.ObjectId(body.categoryId) } },
+          { new: true },
+        )
+        .exec();
+    }
 
     return {
       success: true,

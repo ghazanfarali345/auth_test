@@ -35,7 +35,12 @@ export class CategoriesService {
   }
 
   async findAll(req: Request) {
-    const result = await pagination(this.categoryModel, req, {});
+    let customQuery = {
+      userId: {
+        $exists: false,
+      },
+    };
+    const result = await pagination(this.categoryModel, req, customQuery);
     return {
       success: true,
       message: 'Category fetched successfully',

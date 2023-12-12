@@ -7,7 +7,7 @@ export class UpdateUserDTO {
 
   @IsOptional()
   @IsNotEmpty()
-  profileImage?: string;
+  profileImage?: any;
 
   @IsOptional()
   @IsNotEmpty()
