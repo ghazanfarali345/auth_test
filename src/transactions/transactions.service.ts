@@ -140,6 +140,15 @@ export class TransactionsService {
     updateTransactionDto: UpdateTransactionDto,
     req: Request,
   ) {
+    let transactionExist = await this.TransactionModel.findOne({ _id: id });
+    if (!transactionExist) {
+      return {
+        success: true,
+        message: 'Transaction has been removed, can not add it now',
+        data: null,
+      };
+    }
+
     await this.TransactionModel.findByIdAndUpdate(
       { _id: id },
       updateTransactionDto,
@@ -158,6 +167,16 @@ export class TransactionsService {
   }
 
   async remove(filter: { [key: string]: any }, req: Request) {
+    let transactionExist = await this.TransactionModel.findOne(filter);
+
+    if (!transactionExist) {
+      return {
+        success: true,
+        message: 'Transaction has been removed earlier, can not remove it now.',
+        data: null,
+      };
+    }
+
     await this.TransactionModel.findOneAndDelete(filter);
 
     if (req.query.notifId) {
@@ -175,7 +194,7 @@ export class TransactionsService {
     await this.notificationsService.create({
       to: transaction.userId,
       title: 'Scheduled Transaction',
-      description: `Today is the scheduled date for your transaction: ${transaction.description}`,
+      description: `Today is the scheduled date for your transaction amount: ${transaction.amount}`,
       type: 'BUTTON',
       transactionId: transaction._id,
     });
@@ -185,8 +204,8 @@ export class TransactionsService {
   async reminderNotification(transaction) {
     await this.notificationsService.create({
       to: transaction.userId,
-      title: 'Upcoming Transaction',
-      description: `You have an upcoming transaction in _ days: ${transaction.description}`,
+      title: 'Reminder for upcoming transaction',
+      description: `You have an upcoming transaction in _ days: 2`,
       type: 'REMINDER',
       transactionId: transaction._id,
     });
@@ -194,6 +213,7 @@ export class TransactionsService {
 
   async handleNotifications() {
     const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
 
     const transactions = await this.TransactionModel.find({
       $or: [
@@ -201,12 +221,14 @@ export class TransactionsService {
           scheduledCashOut: true,
           scheduledCashOutDate: { $gte: currentDate },
         },
-        {
-          scheduledCashIn: true,
-          scheduledCashInDate: { $gte: currentDate },
-        },
+        // {
+        //   scheduledCashIn: true,
+        //   scheduledCashInDate: { $gte: currentDate },
+        // },
       ],
     }).exec();
+
+    console.log({ transactions });
 
     transactions.forEach(async (transaction) => {
       const notificationDate = new Date(
@@ -215,9 +237,13 @@ export class TransactionsService {
 
       console.log(
         { currentDate, notificationDate },
-        { s: transaction.scheduledCashOutDate },
         currentDate.toDateString() === notificationDate.toDateString(),
-        transaction.scheduledCashOutDate.toDateString() ===
+      );
+
+      console.log(
+        new Date(transaction.scheduledCashOutDate).toDateString(),
+        currentDate.toDateString(),
+        new Date(transaction.scheduledCashOutDate).toDateString() ===
           currentDate.toDateString(),
       );
 
@@ -225,7 +251,7 @@ export class TransactionsService {
         this.reminderNotification(transaction);
       }
       if (
-        transaction.scheduledCashOutDate.toDateString() ===
+        new Date(transaction.scheduledCashOutDate).toDateString() ===
         currentDate.toDateString()
       ) {
         this.buttonNotification(transaction);

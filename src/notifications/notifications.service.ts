@@ -25,9 +25,11 @@ export class NotificationsService {
 
   async findAll(req: IGetUserAuthInfoRequest) {
     console.log(req.user._id);
-    const notification = await this.notificationModel.find({
-      to: req.user._id,
-    });
+    const notification = await this.notificationModel
+      .find({
+        to: req.user._id,
+      })
+      .sort({ createdAt: -1 });
 
     console.log({ notification });
 
