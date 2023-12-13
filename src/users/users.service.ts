@@ -376,6 +376,8 @@ export class UsersService {
     if (body.name) {
       let userId = req.user._id;
       body.userId = userId;
+      body.icon =
+        'https://cdn.iconscout.com/icon/free/png-256/free-category-2456577-2036097.png';
       let userCategoryCreated: any = await this.categoriesService.create(body);
 
       console.log({ userCategoryCreated });

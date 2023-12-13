@@ -45,6 +45,10 @@ export class CreateTransactionDto {
   @IsString()
   description: string;
 
+  @IsString()
+  @IsNotEmpty()
+  icon: string;
+
   @IsOptional()
   @IsBoolean()
   scheduledCashOut?: boolean;

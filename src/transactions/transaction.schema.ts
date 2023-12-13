@@ -19,6 +19,9 @@ export class Transaction {
   @Prop({})
   description: string;
 
+  @Prop({ required: true })
+  icon: string;
+
   @Prop({ default: true })
   transactionFulfilled: boolean;
 

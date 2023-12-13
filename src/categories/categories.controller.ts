@@ -8,12 +8,16 @@ import {
   Delete,
   Req,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Request } from 'express';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { multerConfig } from 'src/utils/multer.config';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('categories')
 export class CategoriesController {
@@ -21,7 +25,13 @@ export class CategoriesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  @UseInterceptors(FileInterceptor('icon', multerConfig))
+  create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @UploadedFile() file: Express.Multer.File | any,
+    @Req() req: Request,
+  ) {
+    createCategoryDto.icon = `http://${req.get('host')}/${file?.filename}`;
     return this.categoriesService.create(createCategoryDto);
   }
 

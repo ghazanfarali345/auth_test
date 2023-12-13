@@ -25,19 +25,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import path from 'path';
 import { extname } from 'path';
-
-export const storage = {
-  storage: diskStorage({
-    destination: './images',
-    filename: (req: IGetUserAuthInfoRequest, file, cb) => {
-      console.log({ file }, 'storage');
-      const filename: string = req?.user._id + '123';
-      const extension: string = extname(file.originalname);
-
-      cb(null, `${filename}${extension}`);
-    },
-  }),
-};
+import { storage } from 'src/utils/multer.config';
 
 @Controller('users')
 export class UsersController {
@@ -112,12 +100,8 @@ export class UsersController {
   ) {
     let body: UpdateDTO = req.body;
 
-    console.log({ body });
-
-    console.log({ file }, 'asdfa');
     if (file) {
-      console.log({ file }, 'asdfa');
-      // body.profileImage = `http://${req.get('host')}/${file?.filename}`;
+      body.profileImage = `http://${req.get('host')}/${file?.filename}`;
     }
 
     return this.usersService.findOneAndUpdate({ email: req.user.email }, body);
