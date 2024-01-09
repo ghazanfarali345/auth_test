@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
 
@@ -33,7 +33,7 @@ export class UsersService {
   ) {}
 
   async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 12);
+    return bcryptjs.hash(password, 12);
   }
 
   async register(
@@ -182,7 +182,7 @@ export class UsersService {
         },
         HttpStatus.BAD_REQUEST,
       );
-    const password = await bcrypt.compare(userData.password, user.password);
+    const password = await bcryptjs.compare(userData.password, user.password);
 
     if (!password) {
       throw new HttpException(
@@ -320,7 +320,7 @@ export class UsersService {
           HttpStatus.BAD_REQUEST,
         );
 
-      const password = await bcrypt.compare(body.password, user.password);
+      const password = await bcryptjs.compare(body.password, user.password);
 
       if (password)
         throw new HttpException(
@@ -340,7 +340,7 @@ export class UsersService {
     }
     if (body.type === ResetPasswordTypeEnum.CHANGE_PASSWORD) {
       const { data: user }: any = await this.findByEmail(body.email);
-      const password = await bcrypt.compare(body.oldPassword, user.password);
+      const password = await bcryptjs.compare(body.oldPassword, user.password);
 
       if (!password)
         throw new HttpException(

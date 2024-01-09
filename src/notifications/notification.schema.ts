@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, ObjectId, Types } from 'mongoose';
-import { Transaction } from 'src/transactions/transaction.schema';
 import { User } from 'src/users/user.schema';
 
 export type NotificationDocument = HydratedDocument<Notification>;
@@ -24,9 +23,6 @@ export class Notification {
 
   @Prop({ enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' })
   status: string;
-
-  @Prop({ ref: () => Transaction, type: () => Types.ObjectId })
-  transactionId: Types.ObjectId;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);

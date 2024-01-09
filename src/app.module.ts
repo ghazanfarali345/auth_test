@@ -11,13 +11,10 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { RoleModule } from './role/role.module';
 import { UserDevicesModule } from './user-devices/user-devices.module';
 import { SocialAuthModule } from './social-auth/social-auth.module';
 import { CategoriesModule } from './categories/categories.module';
 import { NotificationsModule } from './notifications/notifications.module';
-import { TransactionsModule } from './transactions/transactions.module';
-import { HomeModule } from './home/home.module';
 import { StaticContentModule } from './static-content/static-content.module';
 import { FaqModule } from './faq/faq.module';
 import { CronJob } from './utils/crons';
@@ -61,13 +58,10 @@ import { PushNotificationsModule } from './push-notifications/push-notifications
       serveRoot: '',
     }),
     UsersModule,
-    RoleModule,
     UserDevicesModule,
     SocialAuthModule,
     CategoriesModule,
     NotificationsModule,
-    TransactionsModule,
-    HomeModule,
     StaticContentModule,
     FaqModule,
     PushNotificationsModule,
