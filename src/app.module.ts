@@ -1,38 +1,36 @@
 import { Module } from '@nestjs/common';
+import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
 
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { UserDevicesModule } from './user-devices/user-devices.module';
-import { SocialAuthModule } from './social-auth/social-auth.module';
-import { CategoriesModule } from './categories/categories.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { StaticContentModule } from './static-content/static-content.module';
-import { FaqModule } from './faq/faq.module';
-import { CronJob } from './utils/crons';
-import firebaseConfig from 'firebase.config';
-import { PushNotificationsModule } from './push-notifications/push-notifications.module';
+import * as redis from 'cache-manager-redis-store';
 
 @Module({
   imports: [
+    // CacheModule.register({
+    //   // @ts-ignore
+    //   store: redis,
+    //   socket: {
+    //     host: 'localhost',
+    //     port: 6379,
+    //   },
+    // }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [firebaseConfig],
       envFilePath: '.env',
     }),
     ScheduleModule.forRoot(),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: '30s' },
     }),
     MailerModule.forRoot({
       transport: {
@@ -45,28 +43,19 @@ import { PushNotificationsModule } from './push-notifications/push-notifications
         },
       },
       defaults: {
-        from: '"nest-modules" <user@gmail.com>', // outgoing email ID
+        from: '"nest-modules" <ghazanfarmalik345@gmail.com>', // outgoing email ID
       },
     }),
-    MongooseModule.forRoot(
-      process.env.NODE_ENV === 'development'
-        ? process.env.MONGO_URL
-        : process.env.MONGO_URL_ATLAS,
-    ),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'images'),
-      serveRoot: '',
-    }),
+    MongooseModule.forRoot(process.env.MONGO_URL),
     UsersModule,
-    UserDevicesModule,
-    SocialAuthModule,
-    CategoriesModule,
-    NotificationsModule,
-    StaticContentModule,
-    FaqModule,
-    PushNotificationsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CronJob],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CacheInterceptor,
+    // },
+  ],
 })
 export class AppModule {}

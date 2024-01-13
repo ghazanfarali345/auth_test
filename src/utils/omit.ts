@@ -10,7 +10,7 @@ function omit<T>(obj: T, property: keyof T | (keyof T)[]) {
   }
 
   const { [property]: unused, ...rest } = obj;
-
+  console.log(unused);
   return rest;
 }
 
