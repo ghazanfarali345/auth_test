@@ -5,6 +5,7 @@ import { CreateUserDTO } from './dtos/createUser.dto';
 import { VerifyUserDTO } from './dtos/verifyUser.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { IGetUserAuthInfoRequest, genericResponseType } from 'src/interfaces';
+import { Request } from 'express';
 
 @Controller('user')
 export class UsersController {
@@ -21,13 +22,16 @@ export class UsersController {
   }
 
   @Post('/login')
-  loginUser(@Body() body: LoginDTO): Promise<genericResponseType> {
-    return this.usersService.login(body);
+  loginUser(
+    @Req() req: Request,
+    @Body() body: LoginDTO,
+  ): Promise<genericResponseType> {
+    return this.usersService.login(req, body);
   }
 
   @Post('/logout')
   @UseGuards(AuthGuard)
   logout(@Req() req: IGetUserAuthInfoRequest) {
-    return this.usersService.logout(req);
+    return this.usersService.logout();
   }
 }
